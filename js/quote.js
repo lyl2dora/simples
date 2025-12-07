@@ -5,6 +5,8 @@
 const Quote = {
   textElement: null,
   sourceElement: null,
+  maxRetries: 3,
+  retryDelay: 1000,
 
   /**
    * Initialize quote
@@ -13,20 +15,51 @@ const Quote = {
     this.textElement = document.getElementById('quote-text');
     this.sourceElement = document.getElementById('quote-source');
 
+    // Try to load cached quote first for immediate display
+    const cached = sessionStorage.getItem('hitokoto_cache');
+    if (cached) {
+      try {
+        this.display(JSON.parse(cached));
+      } catch (e) {
+        // Ignore cache parse errors
+      }
+    }
+
+    // Fetch new quote
     await this.fetch();
   },
 
   /**
-   * Fetch quote from Hitokoto API
+   * Fetch quote from Hitokoto API with retry
    */
-  async fetch() {
+  async fetch(retryCount = 0) {
     try {
-      const response = await fetch('https://v1.hitokoto.cn/');
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s timeout
+
+      const response = await fetch('https://v1.hitokoto.cn/', {
+        signal: controller.signal
+      });
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+
       const data = await response.json();
+
+      // Cache the result
+      sessionStorage.setItem('hitokoto_cache', JSON.stringify(data));
 
       this.display(data);
     } catch (error) {
-      console.error('Error fetching quote:', error);
+      // Retry on failure
+      if (retryCount < this.maxRetries) {
+        await new Promise(resolve => setTimeout(resolve, this.retryDelay));
+        return this.fetch(retryCount + 1);
+      }
+
+      console.warn('Quote fetch failed after retries:', error.message);
       this.displayFallback();
     }
   },

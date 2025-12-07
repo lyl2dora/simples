@@ -91,6 +91,44 @@ const Drag = {
 
     document.addEventListener('touchmove', (e) => this.onTouchMove(e), { passive: false });
     document.addEventListener('touchend', () => this.onMouseUp());
+
+    // Right-click to exit edit mode
+    document.addEventListener('contextmenu', (e) => this.onContextMenu(e));
+  },
+
+  /**
+   * Context menu handler - right-click to exit edit mode
+   */
+  onContextMenu(e) {
+    if (!document.body.classList.contains('edit-mode')) return;
+
+    // Check if clicking on main container or draggable elements (not on shortcuts context menu area)
+    const isInMainArea = e.target.closest('#main-container') ||
+                         e.target.closest('.draggable-element') ||
+                         e.target === document.body;
+
+    // Don't interfere with shortcut context menu
+    const isShortcutItem = e.target.closest('.shortcut-item');
+    if (isShortcutItem) return;
+
+    if (isInMainArea) {
+      e.preventDefault();
+      this.exitEditMode();
+    }
+  },
+
+  /**
+   * Exit edit mode and update UI
+   */
+  async exitEditMode() {
+    this.disableEditMode();
+    await Storage.saveSetting('editMode', false);
+
+    // Update settings checkbox if visible
+    const editModeCheckbox = document.getElementById('setting-edit-mode');
+    if (editModeCheckbox) {
+      editModeCheckbox.checked = false;
+    }
   },
 
   /**
@@ -100,10 +138,10 @@ const Drag = {
     // Only drag in edit mode
     if (!document.body.classList.contains('edit-mode')) return;
 
-    // Ignore if clicking on input elements
-    if (e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON') return;
-
+    // In edit mode, allow dragging even on input/button elements
+    // The element itself will be dragged, not interacted with
     e.preventDefault();
+    e.stopPropagation();
     this.startDrag(e.clientX, e.clientY, el);
   },
 

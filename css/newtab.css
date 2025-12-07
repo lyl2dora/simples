@@ -95,6 +95,35 @@ body.edit-mode .draggable-element::before {
   pointer-events: none;
 }
 
+/* Edit mode hint */
+#edit-mode-hint {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 10px 20px;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 8px;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.9);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  z-index: 999;
+}
+
+body.edit-mode #edit-mode-hint {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Disable pointer events on inputs in edit mode */
+body.edit-mode #search-input {
+  pointer-events: none;
+}
+
 /* Guide lines for centering */
 .guide-line {
   position: fixed;
