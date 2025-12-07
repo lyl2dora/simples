@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>新标签页</title>
+  <link rel="stylesheet" href="css/newtab.css">
+</head>
+<body>
+  <!-- Wallpaper layers -->
+  <div id="wallpaper-container">
+    <div id="wallpaper-current" class="wallpaper-layer"></div>
+    <div id="wallpaper-next" class="wallpaper-layer"></div>
+    <div id="wallpaper-overlay"></div>
+  </div>
+
+  <!-- Main content container -->
+  <div id="main-container">
+    <!-- Clock/Date element -->
+    <div id="clock-container" class="draggable-element" data-element-id="clock">
+      <div id="time"></div>
+      <div id="date"></div>
+    </div>
+
+    <!-- Search box element -->
+    <div id="search-container" class="draggable-element" data-element-id="search">
+      <div id="search-wrapper">
+        <input type="text" id="search-input" placeholder="搜索" autocomplete="off">
+        <div id="search-suggestions"></div>
+      </div>
+    </div>
+
+    <!-- Quote element -->
+    <div id="quote-container" class="draggable-element" data-element-id="quote">
+      <p id="quote-text"></p>
+      <p id="quote-source"></p>
+    </div>
+
+    <!-- Shortcuts element -->
+    <div id="shortcuts-container" class="draggable-element" data-element-id="shortcuts">
+      <div id="shortcuts-grid"></div>
+    </div>
+  </div>
+
+  <!-- Settings button -->
+  <button id="settings-btn" title="设置">
+    <svg viewBox="0 0 24 24" width="24" height="24">
+      <path fill="currentColor" d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/>
+    </svg>
+  </button>
+
+  <!-- Wallpaper info button -->
+  <button id="wallpaper-info-btn" title="壁纸信息">
+    <svg viewBox="0 0 24 24" width="20" height="20">
+      <path fill="currentColor" d="M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z"/>
+    </svg>
+  </button>
+  <div id="wallpaper-info-tooltip"></div>
+
+  <!-- Settings sidebar -->
+  <div id="settings-overlay"></div>
+  <div id="settings-sidebar">
+    <div id="settings-header">
+      <h2>设置</h2>
+      <button id="settings-close-btn">
+        <svg viewBox="0 0 24 24" width="24" height="24">
+          <path fill="currentColor" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"/>
+        </svg>
+      </button>
+    </div>
+    <div id="settings-content">
+      <!-- Wallpaper settings -->
+      <section class="settings-section">
+        <h3>壁纸</h3>
+        <div class="setting-item">
+          <label>壁纸来源</label>
+          <select id="setting-wallpaper-source">
+            <option value="bing">Bing 每日壁纸</option>
+            <option value="local">本地上传</option>
+          </select>
+        </div>
+        <div class="setting-item" id="bing-settings">
+          <label>切换方式</label>
+          <select id="setting-wallpaper-mode">
+            <option value="random">随机切换</option>
+            <option value="sequential">顺序切换</option>
+            <option value="daily">每日更新</option>
+          </select>
+        </div>
+        <div class="setting-item" id="local-wallpaper-settings" style="display:none;">
+          <label>本地壁纸</label>
+          <input type="file" id="local-wallpaper-input" accept="image/*" multiple>
+          <div id="local-wallpaper-preview"></div>
+        </div>
+        <div class="setting-item">
+          <label>叠加层透明度</label>
+          <input type="range" id="setting-overlay-opacity" min="0" max="60" value="30">
+          <span id="overlay-opacity-value">30%</span>
+        </div>
+      </section>
+
+      <!-- Search settings -->
+      <section class="settings-section">
+        <h3>搜索</h3>
+        <div class="setting-item">
+          <label>搜索结果打开方式</label>
+          <select id="setting-search-target">
+            <option value="new">新标签页</option>
+            <option value="current">当前页面</option>
+          </select>
+        </div>
+        <div class="setting-item">
+          <label class="toggle-label">
+            <span>显示搜索建议</span>
+            <input type="checkbox" id="setting-search-suggestions" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </section>
+
+      <!-- Shortcuts settings -->
+      <section class="settings-section">
+        <h3>快捷链接</h3>
+        <div class="setting-item">
+          <label>每行显示数量</label>
+          <select id="setting-shortcuts-per-row">
+            <option value="4">4 个</option>
+            <option value="5">5 个</option>
+            <option value="6" selected>6 个</option>
+            <option value="7">7 个</option>
+            <option value="8">8 个</option>
+          </select>
+        </div>
+      </section>
+
+      <!-- Layout settings -->
+      <section class="settings-section">
+        <h3>布局</h3>
+        <div class="setting-item">
+          <label class="toggle-label">
+            <span>编辑模式</span>
+            <input type="checkbox" id="setting-edit-mode">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="setting-item">
+          <button id="reset-positions-btn" class="settings-btn">恢复默认位置</button>
+        </div>
+        <div class="setting-item">
+          <label>显示元素</label>
+          <div class="checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="show-clock" checked>
+              <span>时间日期</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" id="show-search" checked>
+              <span>搜索框</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" id="show-quote" checked>
+              <span>一言</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" id="show-shortcuts" checked>
+              <span>快捷链接</span>
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <!-- Data settings -->
+      <section class="settings-section">
+        <h3>数据</h3>
+        <div class="setting-item button-group">
+          <button id="export-config-btn" class="settings-btn">导出配置</button>
+          <button id="import-config-btn" class="settings-btn">导入配置</button>
+          <input type="file" id="import-config-input" accept=".json" style="display:none;">
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- Context menu for shortcuts -->
+  <div id="shortcut-context-menu" class="context-menu">
+    <div class="context-menu-item" data-action="edit">编辑</div>
+    <div class="context-menu-item" data-action="delete">删除</div>
+  </div>
+
+  <!-- Shortcut edit dialog -->
+  <div id="shortcut-dialog-overlay"></div>
+  <div id="shortcut-dialog">
+    <h3 id="shortcut-dialog-title">添加快捷链接</h3>
+    <div class="dialog-field">
+      <label>名称</label>
+      <input type="text" id="shortcut-name-input" placeholder="网站名称">
+    </div>
+    <div class="dialog-field">
+      <label>网址</label>
+      <input type="text" id="shortcut-url-input" placeholder="https://example.com">
+    </div>
+    <div class="dialog-field">
+      <label>图标</label>
+      <div class="icon-source-tabs">
+        <button class="icon-tab active" data-source="auto">自动获取</button>
+        <button class="icon-tab" data-source="upload">本地上传</button>
+      </div>
+      <div id="icon-upload-area" style="display:none;">
+        <input type="file" id="shortcut-icon-input" accept="image/*">
+        <div id="icon-preview"></div>
+      </div>
+    </div>
+    <div class="dialog-buttons">
+      <button id="shortcut-cancel-btn" class="dialog-btn">取消</button>
+      <button id="shortcut-save-btn" class="dialog-btn primary">保存</button>
+    </div>
+  </div>
+
+  <!-- Add shortcut button (shown on empty slot or as last item) -->
+  <template id="shortcut-template">
+    <div class="shortcut-item" data-id="">
+      <div class="shortcut-icon">
+        <img src="" alt="">
+        <span class="shortcut-letter"></span>
+      </div>
+      <span class="shortcut-name"></span>
+    </div>
+  </template>
+
+  <template id="add-shortcut-template">
+    <div class="shortcut-item add-shortcut">
+      <div class="shortcut-icon">
+        <svg viewBox="0 0 24 24" width="24" height="24">
+          <path fill="currentColor" d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z"/>
+        </svg>
+      </div>
+      <span class="shortcut-name">添加</span>
+    </div>
+  </template>
+
+  <script src="js/storage.js"></script>
+  <script src="js/wallpaper.js"></script>
+  <script src="js/clock.js"></script>
+  <script src="js/quote.js"></script>
+  <script src="js/search.js"></script>
+  <script src="js/shortcuts.js"></script>
+  <script src="js/drag.js"></script>
+  <script src="js/settings.js"></script>
+  <script src="js/newtab.js"></script>
+</body>
+</html>
