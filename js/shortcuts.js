@@ -102,29 +102,82 @@ const Shortcuts = {
       return;
     }
 
-    // Try to get favicon
     const url = new URL(shortcut.url);
     const domain = url.hostname;
 
-    // Try direct favicon.ico first
+    // Check favicon cache first
+    const cachedFavicon = await Storage.getCachedFavicon(domain);
+    if (cachedFavicon) {
+      imgEl.src = cachedFavicon;
+      imgEl.classList.remove('hidden');
+      letterEl.classList.add('hidden');
+      return;
+    }
+
+    // Try to get favicon and cache it
     const faviconUrl = `${url.origin}/favicon.ico`;
 
-    imgEl.src = faviconUrl;
     imgEl.classList.remove('hidden');
     letterEl.classList.add('hidden');
 
-    imgEl.onerror = () => {
-      // Fallback to Google S2
-      const googleFavicon = `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
-      imgEl.src = googleFavicon;
+    // Load and cache favicon
+    this.loadAndCacheFavicon(imgEl, letterEl, domain, faviconUrl, shortcut.name);
+  },
 
-      imgEl.onerror = () => {
-        // Final fallback: show letter
-        imgEl.classList.add('hidden');
-        letterEl.classList.remove('hidden');
-        letterEl.textContent = shortcut.name.charAt(0).toUpperCase();
-      };
+  /**
+   * Load favicon and cache it
+   */
+  async loadAndCacheFavicon(imgEl, letterEl, domain, faviconUrl, name) {
+    const tryLoadImage = (url) => {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => resolve(img);
+        img.onerror = () => resolve(null);
+        img.src = url;
+      });
     };
+
+    const convertToBase64 = (img) => {
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width || 32;
+        canvas.height = img.height || 32;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        return canvas.toDataURL('image/png');
+      } catch (e) {
+        return null;
+      }
+    };
+
+    // Try direct favicon.ico
+    let img = await tryLoadImage(faviconUrl);
+    if (img) {
+      const base64 = convertToBase64(img);
+      if (base64) {
+        imgEl.src = base64;
+        Storage.saveFavicon(domain, base64);
+        return;
+      }
+    }
+
+    // Fallback to Google S2
+    const googleFavicon = `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
+    img = await tryLoadImage(googleFavicon);
+    if (img) {
+      const base64 = convertToBase64(img);
+      if (base64) {
+        imgEl.src = base64;
+        Storage.saveFavicon(domain, base64);
+        return;
+      }
+    }
+
+    // Final fallback: show letter
+    imgEl.classList.add('hidden');
+    letterEl.classList.remove('hidden');
+    letterEl.textContent = name.charAt(0).toUpperCase();
   },
 
   /**

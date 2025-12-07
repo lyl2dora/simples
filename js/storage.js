@@ -176,6 +176,57 @@ const Storage = {
   },
 
   /**
+   * Get cached favicons
+   */
+  async getFaviconCache() {
+    const result = await this.getLocal(['faviconCache']);
+    return result.faviconCache || {};
+  },
+
+  /**
+   * Save favicon to cache
+   */
+  async saveFavicon(domain, base64Data) {
+    const cache = await this.getFaviconCache();
+    cache[domain] = {
+      data: base64Data,
+      timestamp: Date.now()
+    };
+    await this.saveLocal({ faviconCache: cache });
+  },
+
+  /**
+   * Get cached favicon for domain
+   */
+  async getCachedFavicon(domain) {
+    const cache = await this.getFaviconCache();
+    const entry = cache[domain];
+    if (entry) {
+      // Cache valid for 7 days
+      const maxAge = 7 * 24 * 60 * 60 * 1000;
+      if (Date.now() - entry.timestamp < maxAge) {
+        return entry.data;
+      }
+    }
+    return null;
+  },
+
+  /**
+   * Get cached quote
+   */
+  async getCachedQuote() {
+    const result = await this.getLocal(['quoteCache']);
+    return result.quoteCache || null;
+  },
+
+  /**
+   * Save quote to cache
+   */
+  async saveQuoteCache(quoteData) {
+    await this.saveLocal({ quoteCache: quoteData });
+  },
+
+  /**
    * Export all configuration
    */
   async exportConfig() {

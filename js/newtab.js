@@ -5,27 +5,22 @@
 (async function() {
   'use strict';
 
-  // Initialize modules in order
   try {
-    // Initialize clock first (immediate visual feedback)
+    // Phase 1: Immediate (no async, no network)
     Clock.init();
 
-    // Initialize drag functionality
+    // Phase 2: Load positions (needed before rendering)
     await Drag.init();
 
-    // Initialize wallpaper (may take time to load)
-    await Wallpaper.init();
+    // Phase 3: Parallel loading (independent modules with network requests)
+    await Promise.all([
+      Wallpaper.init(),
+      Quote.init(),
+      Search.init(),
+      Shortcuts.init()
+    ]);
 
-    // Initialize quote
-    await Quote.init();
-
-    // Initialize search
-    await Search.init();
-
-    // Initialize shortcuts
-    await Shortcuts.init();
-
-    // Initialize settings (last, after all modules are ready)
+    // Phase 4: Settings (after all modules ready)
     await Settings.init();
 
     console.log('New Tab initialized successfully');

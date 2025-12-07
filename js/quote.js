@@ -16,17 +16,13 @@ const Quote = {
     this.sourceElement = document.getElementById('quote-source');
 
     // Try to load cached quote first for immediate display
-    const cached = sessionStorage.getItem('hitokoto_cache');
+    const cached = await Storage.getCachedQuote();
     if (cached) {
-      try {
-        this.display(JSON.parse(cached));
-      } catch (e) {
-        // Ignore cache parse errors
-      }
+      this.display(cached);
     }
 
-    // Fetch new quote
-    await this.fetch();
+    // Fetch new quote (don't await - let it load in background)
+    this.fetch();
   },
 
   /**
@@ -48,8 +44,8 @@ const Quote = {
 
       const data = await response.json();
 
-      // Cache the result
-      sessionStorage.setItem('hitokoto_cache', JSON.stringify(data));
+      // Cache the result to chrome.storage.local
+      await Storage.saveQuoteCache(data);
 
       this.display(data);
     } catch (error) {
@@ -60,7 +56,10 @@ const Quote = {
       }
 
       console.warn('Quote fetch failed after retries:', error.message);
-      this.displayFallback();
+      // Only show fallback if no cached quote was displayed
+      if (!await Storage.getCachedQuote()) {
+        this.displayFallback();
+      }
     }
   },
 
