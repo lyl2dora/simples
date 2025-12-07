@@ -91,7 +91,7 @@ const Shortcuts = {
   },
 
   /**
-   * Set icon for shortcut
+   * Set icon for shortcut using Chrome Favicon API
    */
   async setIcon(imgEl, letterEl, shortcut) {
     // Check for custom uploaded icon first
@@ -102,92 +102,18 @@ const Shortcuts = {
       return;
     }
 
-    const url = new URL(shortcut.url);
-    const domain = url.hostname;
-
-    // Check favicon cache first
-    const cachedFavicon = await Storage.getCachedFavicon(domain);
-    if (cachedFavicon) {
-      imgEl.src = cachedFavicon;
-      imgEl.classList.remove('hidden');
-      letterEl.classList.add('hidden');
-      return;
-    }
-
-    // Try to get favicon and cache it
-    const faviconUrl = `${url.origin}/favicon.ico`;
+    // Use Chrome Favicon API (requires "favicon" permission)
+    const faviconUrl = `chrome-extension://${chrome.runtime.id}/_favicon/?pageUrl=${encodeURIComponent(shortcut.url)}&size=64`;
 
     imgEl.classList.remove('hidden');
     letterEl.classList.add('hidden');
+    imgEl.src = faviconUrl;
 
-    // Load and cache favicon
-    this.loadAndCacheFavicon(imgEl, letterEl, domain, faviconUrl, shortcut.name);
-  },
-
-  /**
-   * Load favicon and cache it
-   */
-  async loadAndCacheFavicon(imgEl, letterEl, domain, faviconUrl, name) {
-    // Try to load image with CORS (for caching)
-    const tryLoadImageWithCors = (url) => {
-      return new Promise((resolve) => {
-        const img = new Image();
-        img.crossOrigin = 'anonymous';
-        img.onload = () => resolve(img);
-        img.onerror = () => resolve(null);
-        img.src = url;
-      });
-    };
-
-    // Try to load image without CORS (just for display)
-    const tryLoadImageNoCors = (url) => {
-      return new Promise((resolve) => {
-        const img = new Image();
-        img.onload = () => resolve(true);
-        img.onerror = () => resolve(false);
-        img.src = url;
-      });
-    };
-
-    const convertToBase64 = (img) => {
-      try {
-        const canvas = document.createElement('canvas');
-        canvas.width = img.width || 32;
-        canvas.height = img.height || 32;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        return canvas.toDataURL('image/png');
-      } catch (e) {
-        return null;
-      }
-    };
-
-    // Strategy 1: Try Google S2 first (usually supports CORS)
-    const googleFavicon = `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
-    let img = await tryLoadImageWithCors(googleFavicon);
-    if (img) {
-      const base64 = convertToBase64(img);
-      if (base64) {
-        imgEl.src = base64;
-        Storage.saveFavicon(domain, base64);
-        return;
-      }
-    }
-
-    // Strategy 2: Try direct favicon.ico without CORS (no caching, just display)
-    const canLoad = await tryLoadImageNoCors(faviconUrl);
-    if (canLoad) {
-      imgEl.src = faviconUrl;
-      return;
-    }
-
-    // Strategy 3: Use Google S2 without CORS as fallback display
-    imgEl.src = googleFavicon;
+    // Fallback to first letter if favicon fails to load
     imgEl.onerror = () => {
-      // Final fallback: show letter
       imgEl.classList.add('hidden');
       letterEl.classList.remove('hidden');
-      letterEl.textContent = name.charAt(0).toUpperCase();
+      letterEl.textContent = shortcut.name.charAt(0).toUpperCase();
     };
   },
 

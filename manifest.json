@@ -6,14 +6,14 @@
   "permissions": [
     "storage",
     "search",
-    "alarms"
+    "alarms",
+    "favicon"
   ],
   "host_permissions": [
     "https://www.bing.com/*",
     "https://cn.bing.com/*",
     "https://v1.hitokoto.cn/*",
-    "https://suggestqueries.google.com/*",
-    "https://www.google.com/s2/*"
+    "https://suggestqueries.google.com/*"
   ],
   "chrome_url_overrides": {
     "newtab": "newtab.html"

@@ -87,25 +87,47 @@ const Wallpaper = {
   },
 
   /**
-   * Fetch Bing wallpapers from API
+   * Fetch a batch of Bing wallpapers
+   */
+  async fetchBingBatch(idx) {
+    const response = await fetch(
+      `https://www.bing.com/HPImageArchive.aspx?format=js&idx=${idx}&n=8&mkt=zh-CN&uhd=1`
+    );
+    const data = await response.json();
+
+    if (!data.images || !data.images.length) {
+      return [];
+    }
+
+    return data.images.map(img => ({
+      url: `https://www.bing.com${img.urlbase}_UHD.jpg`,
+      copyright: img.copyright,
+      title: img.title || this.extractTitle(img.copyright),
+      date: img.startdate
+    }));
+  },
+
+  /**
+   * Fetch Bing wallpapers from API (24 days: idx=0, 8, 16)
    */
   async fetchBingWallpapers() {
     try {
-      const response = await fetch(
-        'https://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=8&mkt=zh-CN&uhd=1'
+      // Fetch 3 batches in parallel for 24 days of wallpapers
+      const [batch0, batch8, batch16] = await Promise.all([
+        this.fetchBingBatch(0),
+        this.fetchBingBatch(8),
+        this.fetchBingBatch(16)
+      ]);
+
+      // Combine all batches
+      const allWallpapers = [...batch0, ...batch8, ...batch16];
+
+      // Deduplicate by date (in case of overlap)
+      const uniqueWallpapers = allWallpapers.filter((wp, index, self) =>
+        index === self.findIndex(w => w.date === wp.date)
       );
-      const data = await response.json();
 
-      if (!data.images || !data.images.length) {
-        return [];
-      }
-
-      return data.images.map(img => ({
-        url: `https://www.bing.com${img.urlbase}_UHD.jpg`,
-        copyright: img.copyright,
-        title: img.title || this.extractTitle(img.copyright),
-        date: img.startdate
-      }));
+      return uniqueWallpapers;
     } catch (error) {
       console.error('Error fetching Bing wallpapers:', error);
       return [];
