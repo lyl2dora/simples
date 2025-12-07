@@ -128,12 +128,23 @@ const Shortcuts = {
    * Load favicon and cache it
    */
   async loadAndCacheFavicon(imgEl, letterEl, domain, faviconUrl, name) {
-    const tryLoadImage = (url) => {
+    // Try to load image with CORS (for caching)
+    const tryLoadImageWithCors = (url) => {
       return new Promise((resolve) => {
         const img = new Image();
         img.crossOrigin = 'anonymous';
         img.onload = () => resolve(img);
         img.onerror = () => resolve(null);
+        img.src = url;
+      });
+    };
+
+    // Try to load image without CORS (just for display)
+    const tryLoadImageNoCors = (url) => {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => resolve(true);
+        img.onerror = () => resolve(false);
         img.src = url;
       });
     };
@@ -151,20 +162,9 @@ const Shortcuts = {
       }
     };
 
-    // Try direct favicon.ico
-    let img = await tryLoadImage(faviconUrl);
-    if (img) {
-      const base64 = convertToBase64(img);
-      if (base64) {
-        imgEl.src = base64;
-        Storage.saveFavicon(domain, base64);
-        return;
-      }
-    }
-
-    // Fallback to Google S2
+    // Strategy 1: Try Google S2 first (usually supports CORS)
     const googleFavicon = `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
-    img = await tryLoadImage(googleFavicon);
+    let img = await tryLoadImageWithCors(googleFavicon);
     if (img) {
       const base64 = convertToBase64(img);
       if (base64) {
@@ -174,10 +174,21 @@ const Shortcuts = {
       }
     }
 
-    // Final fallback: show letter
-    imgEl.classList.add('hidden');
-    letterEl.classList.remove('hidden');
-    letterEl.textContent = name.charAt(0).toUpperCase();
+    // Strategy 2: Try direct favicon.ico without CORS (no caching, just display)
+    const canLoad = await tryLoadImageNoCors(faviconUrl);
+    if (canLoad) {
+      imgEl.src = faviconUrl;
+      return;
+    }
+
+    // Strategy 3: Use Google S2 without CORS as fallback display
+    imgEl.src = googleFavicon;
+    imgEl.onerror = () => {
+      // Final fallback: show letter
+      imgEl.classList.add('hidden');
+      letterEl.classList.remove('hidden');
+      letterEl.textContent = name.charAt(0).toUpperCase();
+    };
   },
 
   /**
