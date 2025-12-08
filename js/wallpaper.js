@@ -38,6 +38,25 @@ const Wallpaper = {
   },
 
   /**
+   * Get wallpaper index based on mode
+   */
+  async getWallpaperIndex(wallpapers, settings) {
+    let index = settings.currentWallpaperIndex || 0;
+
+    switch (settings.wallpaperMode) {
+      case 'random':
+        return Math.floor(Math.random() * wallpapers.length);
+      case 'sequential':
+        index = (index + 1) % wallpapers.length;
+        await Storage.saveSetting('currentWallpaperIndex', index);
+        return index;
+      case 'daily':
+      default:
+        return 0;
+    }
+  },
+
+  /**
    * Load Bing wallpaper
    */
   async loadBingWallpaper(settings) {
@@ -58,23 +77,8 @@ const Wallpaper = {
       }
 
       // Select wallpaper based on mode
-      let selectedWallpaper;
-      let index = settings.currentWallpaperIndex || 0;
-
-      switch (settings.wallpaperMode) {
-        case 'random':
-          index = Math.floor(Math.random() * wallpapers.length);
-          break;
-        case 'sequential':
-          index = (index + 1) % wallpapers.length;
-          await Storage.saveSetting('currentWallpaperIndex', index);
-          break;
-        case 'daily':
-          index = 0; // Always use today's wallpaper
-          break;
-      }
-
-      selectedWallpaper = wallpapers[index];
+      const index = await this.getWallpaperIndex(wallpapers, settings);
+      const selectedWallpaper = wallpapers[index];
       this.wallpaperInfo = selectedWallpaper;
 
       // Load and display wallpaper with transition
@@ -157,20 +161,8 @@ const Wallpaper = {
         return;
       }
 
-      let index = settings.currentWallpaperIndex || 0;
-
-      switch (settings.wallpaperMode) {
-        case 'random':
-          index = Math.floor(Math.random() * wallpapers.length);
-          break;
-        case 'sequential':
-          index = (index + 1) % wallpapers.length;
-          await Storage.saveSetting('currentWallpaperIndex', index);
-          break;
-        default:
-          index = 0;
-      }
-
+      // Select wallpaper based on mode
+      const index = await this.getWallpaperIndex(wallpapers, settings);
       const selectedWallpaper = wallpapers[index];
       this.wallpaperInfo = { title: '本地壁纸', copyright: '' };
 

@@ -48,6 +48,24 @@ const Search = {
         this.hideSuggestions();
       }
     });
+
+    // Event delegation for suggestions
+    this.suggestionsElement.addEventListener('click', (e) => {
+      const item = e.target.closest('.suggestion-item');
+      if (item) {
+        const index = parseInt(item.dataset.index);
+        this.inputElement.value = this.suggestions[index];
+        this.executeSearch();
+      }
+    });
+
+    this.suggestionsElement.addEventListener('mouseover', (e) => {
+      const item = e.target.closest('.suggestion-item');
+      if (item) {
+        this.selectedIndex = parseInt(item.dataset.index);
+        this.updateSelection();
+      }
+    });
   },
 
   /**
@@ -139,19 +157,6 @@ const Search = {
         <span>${this.escapeHtml(suggestion)}</span>
       </div>
     `).join('');
-
-    // Bind click events to suggestions
-    this.suggestionsElement.querySelectorAll('.suggestion-item').forEach((item, index) => {
-      item.addEventListener('click', () => {
-        this.inputElement.value = this.suggestions[index];
-        this.executeSearch();
-      });
-
-      item.addEventListener('mouseenter', () => {
-        this.selectedIndex = index;
-        this.updateSelection();
-      });
-    });
   },
 
   /**

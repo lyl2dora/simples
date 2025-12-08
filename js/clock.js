@@ -48,16 +48,6 @@ const Clock = {
   getWeekDay(day) {
     const weekDays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
     return weekDays[day];
-  },
-
-  /**
-   * Destroy clock (cleanup)
-   */
-  destroy() {
-    if (this.intervalId) {
-      clearInterval(this.intervalId);
-      this.intervalId = null;
-    }
   }
 };
 
