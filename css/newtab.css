@@ -175,6 +175,17 @@ body.edit-mode .guide-line.show {
 #search-container {
   width: 100%;
   max-width: 600px;
+  /* Horizontal centering via left/right auto margin - no translateX to avoid cursor issues */
+  margin-left: auto;
+  margin-right: auto;
+  /* Only use translateY for vertical centering */
+  transform: translateY(-50%);
+  z-index: 10;
+}
+
+/* Elevate z-index when search suggestions are visible */
+#search-container:focus-within {
+  z-index: 100;
 }
 
 #search-wrapper {

@@ -66,10 +66,33 @@ const Drag = {
     // Store position
     this.positions[id] = pos;
 
-    // Apply position (center the element at the percentage point)
-    el.style.left = `${pos.x}%`;
-    el.style.top = `${pos.y}%`;
-    el.style.transform = 'translate(-50%, -50%)';
+    // For search container, avoid translateX to prevent cursor positioning issues
+    // Use left/right values for horizontal positioning instead
+    if (id === 'search') {
+      el.style.top = `${pos.y}%`;
+      el.style.transform = 'translateY(-50%)';
+      // Calculate horizontal position using left and right
+      // When pos.x = 50, center the element (left: 0, right: 0, margin: auto)
+      // When pos.x < 50, shift left; when pos.x > 50, shift right
+      const offset = (pos.x - 50) * 2; // Convert center position to offset percentage
+      if (offset === 0) {
+        el.style.left = '0';
+        el.style.right = '0';
+      } else if (offset < 0) {
+        // Shift towards left
+        el.style.left = '0';
+        el.style.right = `${-offset}%`;
+      } else {
+        // Shift towards right
+        el.style.left = `${offset}%`;
+        el.style.right = '0';
+      }
+    } else {
+      // Apply position (center the element at the percentage point)
+      el.style.left = `${pos.x}%`;
+      el.style.top = `${pos.y}%`;
+      el.style.transform = 'translate(-50%, -50%)';
+    }
   },
 
   /**
