@@ -18,6 +18,8 @@ const Wallpaper = {
     // Load wallpaper based on source
     if (settings.wallpaperSource === 'bing') {
       await this.loadBingWallpaper(settings);
+    } else if (settings.wallpaperSource === 'pexels') {
+      await this.loadPexelsWallpaper(settings);
     } else {
       await this.loadLocalWallpaper(settings);
     }
@@ -149,6 +151,107 @@ const Wallpaper = {
   },
 
   /**
+   * Load Pexels wallpaper
+   */
+  async loadPexelsWallpaper(settings) {
+    try {
+      // Check if API key is configured
+      if (!settings.pexelsApiKey) {
+        console.warn('Pexels API key not configured, falling back to Bing');
+        await this.loadBingWallpaper(settings);
+        return;
+      }
+
+      // Check cache first
+      let { wallpapers, cacheDate } = await Storage.getPexelsCache();
+      const today = new Date().toDateString();
+
+      // Fetch new wallpapers if cache is old or empty
+      if (!wallpapers.length || cacheDate !== today) {
+        wallpapers = await this.fetchPexelsWallpapers(settings);
+        if (wallpapers.length > 0) {
+          const randomPage = Math.floor(Math.random() * 100) + 1;
+          await Storage.savePexelsCache(wallpapers, randomPage);
+        }
+      }
+
+      if (!wallpapers.length) {
+        console.warn('No Pexels wallpapers available, falling back to Bing');
+        await this.loadBingWallpaper(settings);
+        return;
+      }
+
+      // Select wallpaper based on mode
+      const index = await this.getWallpaperIndex(wallpapers, settings);
+      const selectedWallpaper = wallpapers[index];
+      this.wallpaperInfo = selectedWallpaper;
+
+      // Load and display wallpaper with transition
+      await this.displayWallpaper(selectedWallpaper.url);
+      this.updateWallpaperInfo(selectedWallpaper);
+
+    } catch (error) {
+      console.error('Error loading Pexels wallpaper:', error);
+      // Fallback to Bing on error
+      await this.loadBingWallpaper(settings);
+    }
+  },
+
+  /**
+   * Fetch Pexels wallpapers from API
+   */
+  async fetchPexelsWallpapers(settings) {
+    try {
+      const query = encodeURIComponent(settings.pexelsSearchQuery || 'nature wallpaper');
+      const orientation = settings.pexelsOrientation || 'landscape';
+      const randomPage = Math.floor(Math.random() * 100) + 1;
+
+      const response = await fetch(
+        `https://api.pexels.com/v1/search?query=${query}&orientation=${orientation}&size=large&per_page=40&page=${randomPage}`,
+        {
+          headers: {
+            'Authorization': settings.pexelsApiKey
+          }
+        }
+      );
+
+      if (response.status === 401) {
+        console.error('Pexels API key is invalid');
+        return [];
+      }
+
+      if (response.status === 429) {
+        console.error('Pexels API rate limit exceeded');
+        return [];
+      }
+
+      if (!response.ok) {
+        console.error('Pexels API error:', response.status);
+        return [];
+      }
+
+      const data = await response.json();
+
+      if (!data.photos || !data.photos.length) {
+        return [];
+      }
+
+      return data.photos.map(photo => ({
+        url: photo.src.original,
+        title: photo.alt || 'Pexels Wallpaper',
+        copyright: `Photo by ${photo.photographer} on Pexels`,
+        photographer: photo.photographer,
+        photographerUrl: photo.photographer_url,
+        pexelsUrl: photo.url,
+        avgColor: photo.avg_color
+      }));
+    } catch (error) {
+      console.error('Error fetching Pexels wallpapers:', error);
+      return [];
+    }
+  },
+
+  /**
    * Load local wallpaper
    */
   async loadLocalWallpaper(settings) {
@@ -274,6 +377,8 @@ const Wallpaper = {
     const settings = await Storage.getSettings();
     if (settings.wallpaperSource === 'bing') {
       await this.loadBingWallpaper(settings);
+    } else if (settings.wallpaperSource === 'pexels') {
+      await this.loadPexelsWallpaper(settings);
     } else {
       await this.loadLocalWallpaper(settings);
     }
