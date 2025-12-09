@@ -15,6 +15,9 @@ const Wallpaper = {
     // Set overlay opacity
     this.setOverlayOpacity(settings.overlayOpacity);
 
+    // Try to show last wallpaper immediately (for instant display)
+    await this.showLastWallpaperInstantly();
+
     // Load wallpaper based on source
     if (settings.wallpaperSource === 'bing') {
       await this.loadBingWallpaper(settings);
@@ -23,6 +26,23 @@ const Wallpaper = {
     } else {
       await this.loadLocalWallpaper(settings);
     }
+  },
+
+  /**
+   * Show last wallpaper instantly (no transition, for immediate display on load)
+   */
+  async showLastWallpaperInstantly() {
+    const { url, avgColor } = await Storage.getLastWallpaper();
+    const currentEl = document.getElementById('wallpaper-current');
+
+    if (url) {
+      // Show last wallpaper URL (browser HTTP cache should make this instant)
+      currentEl.style.backgroundImage = `url(${url})`;
+    } else if (avgColor) {
+      // Fallback to average color if no URL cached
+      currentEl.style.backgroundColor = avgColor;
+    }
+    // If neither exists, keep default (will be set by loadXxxWallpaper)
   },
 
   /**
@@ -186,8 +206,8 @@ const Wallpaper = {
       const selectedWallpaper = wallpapers[index];
       this.wallpaperInfo = selectedWallpaper;
 
-      // Load and display wallpaper with transition
-      await this.displayWallpaper(selectedWallpaper.url);
+      // Load and display wallpaper with transition (pass avgColor for caching)
+      await this.displayWallpaper(selectedWallpaper.url, selectedWallpaper.avgColor);
       this.updateWallpaperInfo(selectedWallpaper);
 
     } catch (error) {
@@ -236,8 +256,9 @@ const Wallpaper = {
         return [];
       }
 
+      // Use large2x instead of original for faster loading (~1880px width)
       return data.photos.map(photo => ({
-        url: photo.src.original,
+        url: photo.src.large2x,
         title: photo.alt || 'Pexels Wallpaper',
         copyright: `Photo by ${photo.photographer} on Pexels`,
         photographer: photo.photographer,
@@ -280,15 +301,17 @@ const Wallpaper = {
 
   /**
    * Display wallpaper with fade transition
+   * @param {string} url - The wallpaper URL
+   * @param {string} avgColor - Optional average color (for Pexels)
    */
-  async displayWallpaper(url) {
+  async displayWallpaper(url, avgColor = null) {
     return new Promise((resolve) => {
       const currentEl = document.getElementById('wallpaper-current');
       const nextEl = document.getElementById('wallpaper-next');
 
       // Preload image
       const img = new Image();
-      img.onload = () => {
+      img.onload = async () => {
         // Set the next layer
         nextEl.style.backgroundImage = `url(${url})`;
 
@@ -298,10 +321,14 @@ const Wallpaper = {
           currentEl.style.opacity = '0';
 
           // After transition, swap layers
-          setTimeout(() => {
+          setTimeout(async () => {
             currentEl.style.backgroundImage = `url(${url})`;
+            currentEl.style.backgroundColor = ''; // Clear any background color
             currentEl.style.opacity = '1';
             nextEl.style.opacity = '0';
+
+            // Save as last wallpaper for instant display next time
+            await Storage.saveLastWallpaper(url, avgColor);
             resolve();
           }, 800);
         });

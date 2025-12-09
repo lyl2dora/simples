@@ -163,6 +163,27 @@ const Storage = {
   },
 
   /**
+   * Get last displayed wallpaper (for instant display on load)
+   */
+  async getLastWallpaper() {
+    const result = await this.getLocal(['lastWallpaperUrl', 'lastWallpaperAvgColor']);
+    return {
+      url: result.lastWallpaperUrl || null,
+      avgColor: result.lastWallpaperAvgColor || null
+    };
+  },
+
+  /**
+   * Save last displayed wallpaper
+   */
+  async saveLastWallpaper(url, avgColor) {
+    await this.saveLocal({
+      lastWallpaperUrl: url,
+      lastWallpaperAvgColor: avgColor || null
+    });
+  },
+
+  /**
    * Get local wallpapers (stored as base64)
    */
   async getLocalWallpapers() {

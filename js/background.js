@@ -97,8 +97,9 @@ async function prefetchPexelsWallpapers(settings) {
     const data = await response.json();
 
     if (data.photos && data.photos.length > 0) {
+      // Use large2x instead of original for faster loading (~1880px width)
       const wallpapers = data.photos.map(photo => ({
-        url: photo.src.original,
+        url: photo.src.large2x,
         title: photo.alt || 'Pexels Wallpaper',
         copyright: `Photo by ${photo.photographer} on Pexels`,
         photographer: photo.photographer,

@@ -114,12 +114,13 @@ const Settings = {
 
   /**
    * Apply element visibility
+   * Use === false to ensure undefined is treated as true (visible)
    */
   applyVisibility(settings) {
-    document.getElementById('clock-container').classList.toggle('hidden', !settings.showClock);
-    document.getElementById('search-container').classList.toggle('hidden', !settings.showSearch);
-    document.getElementById('quote-container').classList.toggle('hidden', !settings.showQuote);
-    document.getElementById('shortcuts-container').classList.toggle('hidden', !settings.showShortcuts);
+    document.getElementById('clock-container').classList.toggle('hidden', settings.showClock === false);
+    document.getElementById('search-container').classList.toggle('hidden', settings.showSearch === false);
+    document.getElementById('quote-container').classList.toggle('hidden', settings.showQuote === false);
+    document.getElementById('shortcuts-container').classList.toggle('hidden', settings.showShortcuts === false);
   },
 
   /**
