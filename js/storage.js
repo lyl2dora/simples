@@ -26,6 +26,7 @@ const Storage = {
 
     // Layout settings
     editMode: false,
+    panelOpacity: 75, // Panel background opacity (0-100)
     positions: {
       clock: { x: 50, y: 25 },
       search: { x: 50, y: 50 },
