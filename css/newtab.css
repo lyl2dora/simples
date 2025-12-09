@@ -466,10 +466,10 @@ body.edit-mode .guide-line.show {
   right: -400px;
   width: 380px;
   height: 100%;
-  background: rgba(25, 25, 25, 0.98);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  transition: right 0.3s ease;
+  background: rgba(25, 25, 25, var(--panel-opacity, 0.75));
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  transition: right 0.3s ease, background 0.3s ease;
   z-index: 1001;
   display: flex;
   flex-direction: column;
@@ -749,9 +749,9 @@ body.edit-mode .guide-line.show {
 /* Context menu */
 .context-menu {
   position: fixed;
-  background: rgba(30, 30, 30, 0.98);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: rgba(30, 30, 30, var(--panel-opacity, 0.75));
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
   border-radius: 8px;
   padding: 6px 0;
   min-width: 120px;
@@ -801,14 +801,14 @@ body.edit-mode .guide-line.show {
   left: 50%;
   transform: translate(-50%, -50%) scale(0.95);
   width: 360px;
-  background: rgba(35, 35, 35, 0.98);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(35, 35, 35, var(--panel-opacity, 0.75));
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
   border-radius: 16px;
   padding: 24px;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease, background 0.3s ease;
   z-index: 2001;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
 }

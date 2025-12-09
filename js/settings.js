@@ -50,10 +50,15 @@ const Settings = {
 
     // Layout settings
     document.getElementById('setting-edit-mode').checked = settings.editMode;
+    document.getElementById('setting-panel-opacity').value = settings.panelOpacity || 75;
+    document.getElementById('panel-opacity-value').textContent = `${settings.panelOpacity || 75}%`;
     document.getElementById('show-clock').checked = settings.showClock;
     document.getElementById('show-search').checked = settings.showSearch;
     document.getElementById('show-quote').checked = settings.showQuote;
     document.getElementById('show-shortcuts').checked = settings.showShortcuts;
+
+    // Apply panel opacity
+    this.applyPanelOpacity(settings.panelOpacity || 75);
 
     // Apply visibility
     this.applyVisibility(settings);
@@ -121,6 +126,13 @@ const Settings = {
     document.getElementById('search-container').classList.toggle('hidden', settings.showSearch === false);
     document.getElementById('quote-container').classList.toggle('hidden', settings.showQuote === false);
     document.getElementById('shortcuts-container').classList.toggle('hidden', settings.showShortcuts === false);
+  },
+
+  /**
+   * Apply panel opacity to settings sidebar and dialogs
+   */
+  applyPanelOpacity(opacity) {
+    document.documentElement.style.setProperty('--panel-opacity', opacity / 100);
   },
 
   /**
@@ -229,6 +241,17 @@ const Settings = {
       if (confirm('确定要恢复默认位置吗？')) {
         await Drag.resetPositions();
       }
+    });
+
+    // Panel opacity change
+    document.getElementById('setting-panel-opacity').addEventListener('input', async (e) => {
+      const opacity = parseInt(e.target.value);
+      document.getElementById('panel-opacity-value').textContent = `${opacity}%`;
+      this.applyPanelOpacity(opacity);
+    });
+
+    document.getElementById('setting-panel-opacity').addEventListener('change', async (e) => {
+      await Storage.saveSetting('panelOpacity', parseInt(e.target.value));
     });
 
     // Visibility toggles
