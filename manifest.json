@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Simple New Tab",
+  "name": "自定义新标签页",
   "version": "1.0.0",
-  "description": "A beautiful new tab page with Bing wallpapers, Hitokoto quotes, and customizable shortcuts",
+  "description": "一个简洁的新标签页扩展，支持在线壁纸、时间显示、搜索和快捷链接",
   "permissions": [
     "storage",
     "search",
