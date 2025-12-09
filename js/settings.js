@@ -30,6 +30,11 @@ const Settings = {
     document.getElementById('setting-overlay-opacity').value = settings.overlayOpacity;
     document.getElementById('overlay-opacity-value').textContent = `${settings.overlayOpacity}%`;
 
+    // Pexels settings
+    document.getElementById('setting-pexels-api-key').value = settings.pexelsApiKey || '';
+    document.getElementById('setting-pexels-query').value = settings.pexelsSearchQuery || 'nature wallpaper';
+    document.getElementById('setting-pexels-orientation').value = settings.pexelsOrientation || 'landscape';
+
     // Show/hide relevant wallpaper settings
     this.toggleWallpaperSettings(settings.wallpaperSource);
 
@@ -64,13 +69,21 @@ const Settings = {
    */
   toggleWallpaperSettings(source) {
     const bingSettings = document.getElementById('bing-settings');
+    const pexelsSettings = document.getElementById('pexels-settings');
     const localSettings = document.getElementById('local-wallpaper-settings');
 
+    // Hide all first
+    bingSettings.style.display = 'none';
+    pexelsSettings.style.display = 'none';
+    localSettings.style.display = 'none';
+
+    // Show relevant settings
     if (source === 'bing') {
       bingSettings.style.display = 'block';
-      localSettings.style.display = 'none';
+    } else if (source === 'pexels') {
+      pexelsSettings.style.display = 'block';
+      bingSettings.style.display = 'block'; // Also show mode selector for Pexels
     } else {
-      bingSettings.style.display = 'none';
       localSettings.style.display = 'block';
     }
   },
@@ -101,12 +114,13 @@ const Settings = {
 
   /**
    * Apply element visibility
+   * Use === false to ensure undefined is treated as true (visible)
    */
   applyVisibility(settings) {
-    document.getElementById('clock-container').classList.toggle('hidden', !settings.showClock);
-    document.getElementById('search-container').classList.toggle('hidden', !settings.showSearch);
-    document.getElementById('quote-container').classList.toggle('hidden', !settings.showQuote);
-    document.getElementById('shortcuts-container').classList.toggle('hidden', !settings.showShortcuts);
+    document.getElementById('clock-container').classList.toggle('hidden', settings.showClock === false);
+    document.getElementById('search-container').classList.toggle('hidden', settings.showSearch === false);
+    document.getElementById('quote-container').classList.toggle('hidden', settings.showQuote === false);
+    document.getElementById('shortcuts-container').classList.toggle('hidden', settings.showShortcuts === false);
   },
 
   /**
@@ -141,6 +155,37 @@ const Settings = {
       // If source is local, refresh wallpaper
       const settings = await Storage.getSettings();
       if (settings.wallpaperSource === 'local') {
+        await Wallpaper.refresh();
+      }
+    });
+
+    // Pexels API key change
+    document.getElementById('setting-pexels-api-key').addEventListener('change', async (e) => {
+      await Storage.saveSetting('pexelsApiKey', e.target.value.trim());
+      const settings = await Storage.getSettings();
+      if (settings.wallpaperSource === 'pexels') {
+        await Wallpaper.refresh();
+      }
+    });
+
+    // Pexels search query change
+    document.getElementById('setting-pexels-query').addEventListener('change', async (e) => {
+      await Storage.saveSetting('pexelsSearchQuery', e.target.value.trim() || 'nature wallpaper');
+      const settings = await Storage.getSettings();
+      if (settings.wallpaperSource === 'pexels') {
+        // Clear cache to fetch new results
+        await Storage.savePexelsCache([], 1);
+        await Wallpaper.refresh();
+      }
+    });
+
+    // Pexels orientation change
+    document.getElementById('setting-pexels-orientation').addEventListener('change', async (e) => {
+      await Storage.saveSetting('pexelsOrientation', e.target.value);
+      const settings = await Storage.getSettings();
+      if (settings.wallpaperSource === 'pexels') {
+        // Clear cache to fetch new results
+        await Storage.savePexelsCache([], 1);
         await Wallpaper.refresh();
       }
     });

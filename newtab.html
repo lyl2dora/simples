@@ -79,8 +79,33 @@
           <label>壁纸来源</label>
           <select id="setting-wallpaper-source">
             <option value="bing">Bing 每日壁纸</option>
+            <option value="pexels">Pexels</option>
             <option value="local">本地上传</option>
           </select>
+        </div>
+        <div id="pexels-settings" style="display:none;">
+          <div class="setting-item">
+            <label>API Key</label>
+            <div class="input-with-link">
+              <input type="password" id="setting-pexels-api-key" placeholder="输入你的 Pexels API Key">
+              <a href="https://www.pexels.com/api/" target="_blank" class="help-link">获取 Key</a>
+            </div>
+          </div>
+          <div class="setting-item">
+            <label>搜索关键词</label>
+            <input type="text" id="setting-pexels-query" placeholder="nature wallpaper">
+          </div>
+          <div class="setting-item">
+            <label>图片方向</label>
+            <select id="setting-pexels-orientation">
+              <option value="landscape">横向</option>
+              <option value="portrait">竖向</option>
+              <option value="square">方形</option>
+            </select>
+          </div>
+          <div class="setting-item pexels-note">
+            <small>Pexels 图片需显示摄影师归属信息</small>
+          </div>
         </div>
         <div class="setting-item" id="bing-settings">
           <label>切换方式</label>

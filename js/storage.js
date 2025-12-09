@@ -6,10 +6,15 @@ const Storage = {
   // Default settings
   defaults: {
     // Wallpaper settings
-    wallpaperSource: 'bing', // 'bing' or 'local'
+    wallpaperSource: 'bing', // 'bing', 'pexels', or 'local'
     wallpaperMode: 'random', // 'random', 'sequential', 'daily'
     overlayOpacity: 30,
     currentWallpaperIndex: 0,
+
+    // Pexels settings
+    pexelsApiKey: '',
+    pexelsSearchQuery: 'nature wallpaper',
+    pexelsOrientation: 'landscape',
 
     // Search settings
     searchTarget: 'new', // 'new' or 'current'
@@ -131,6 +136,50 @@ const Storage = {
     await this.saveLocal({
       bingWallpapers: wallpapers,
       bingCacheDate: new Date().toDateString()
+    });
+  },
+
+  /**
+   * Get cached Pexels wallpapers
+   */
+  async getPexelsCache() {
+    const result = await this.getLocal(['pexelsWallpapers', 'pexelsCacheDate', 'pexelsCachePage']);
+    return {
+      wallpapers: result.pexelsWallpapers || [],
+      cacheDate: result.pexelsCacheDate || null,
+      cachePage: result.pexelsCachePage || 1
+    };
+  },
+
+  /**
+   * Save Pexels wallpapers cache
+   */
+  async savePexelsCache(wallpapers, page) {
+    await this.saveLocal({
+      pexelsWallpapers: wallpapers,
+      pexelsCacheDate: new Date().toDateString(),
+      pexelsCachePage: page
+    });
+  },
+
+  /**
+   * Get last displayed wallpaper (for instant display on load)
+   */
+  async getLastWallpaper() {
+    const result = await this.getLocal(['lastWallpaperUrl', 'lastWallpaperAvgColor']);
+    return {
+      url: result.lastWallpaperUrl || null,
+      avgColor: result.lastWallpaperAvgColor || null
+    };
+  },
+
+  /**
+   * Save last displayed wallpaper
+   */
+  async saveLastWallpaper(url, avgColor) {
+    await this.saveLocal({
+      lastWallpaperUrl: url,
+      lastWallpaperAvgColor: avgColor || null
     });
   },
 
