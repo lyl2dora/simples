@@ -28,11 +28,12 @@ const Storage = {
     editMode: false,
     panelOpacity: 75, // Panel background opacity (0-100)
     positions: {
-      clock: { x: 50, y: 25 },
-      search: { x: 50, y: 50 },
-      quote: { x: 50, y: 68 },
-      shortcuts: { x: 50, y: 82 },
-      crypto: { x: 50, y: 95 }
+      clock: { x: 50, y: 15 },
+      search: { x: 50, y: 38 },
+      calendar: { x: 15, y: 68 },
+      shortcuts: { x: 75, y: 65 },
+      quote: { x: 50, y: 92 },
+      crypto: { x: 85, y: 95 }
     },
 
     // Visibility settings
@@ -41,6 +42,7 @@ const Storage = {
     showQuote: true,
     showShortcuts: true,
     showCrypto: true,
+    showCalendar: true,
 
     // UI settings
     autoHideControls: true  // Auto-hide add button and settings icon
