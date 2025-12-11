@@ -445,11 +445,22 @@ body.edit-mode .guide-line.show {
   border-color: rgba(255, 255, 255, 0.5);
 }
 
+/* Settings button zone - hover detection area */
+#settings-zone {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  padding: 20px;
+  z-index: 100;
+}
+
 /* Settings button */
 #settings-btn {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
   width: 44px;
   height: 44px;
   border: none;
@@ -475,7 +486,7 @@ body.auto-hide-controls #settings-btn {
   opacity: 0;
 }
 
-body.auto-hide-controls:hover #settings-btn,
+body.auto-hide-controls #settings-zone:hover #settings-btn,
 body.auto-hide-controls #settings-btn:focus {
   opacity: 1;
 }
