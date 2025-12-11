@@ -79,7 +79,7 @@ const Crypto = {
       this.prices[symbol] = {
         price: parseFloat(data.c).toLocaleString('en-US', {
           minimumFractionDigits: 2,
-          maximumFractionDigits: symbol === 'BTCUSDT' ? 2 : 2
+          maximumFractionDigits: 2
         }),
         change: parseFloat(data.p).toFixed(2),
         changePercent: parseFloat(data.P).toFixed(2)
