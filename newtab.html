@@ -7,11 +7,23 @@
   <link rel="stylesheet" href="css/newtab.css">
 </head>
 <body>
+  <!-- SVG grain filter -->
+  <svg style="display: none;">
+    <defs>
+      <filter id="grain-filter">
+        <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4" stitchTiles="stitch" result="noise"/>
+        <feColorMatrix type="saturate" values="0" in="noise" result="mono"/>
+        <feBlend in="SourceGraphic" in2="mono" mode="multiply"/>
+      </filter>
+    </defs>
+  </svg>
+
   <!-- Wallpaper layers -->
   <div id="wallpaper-container">
     <div id="wallpaper-current" class="wallpaper-layer"></div>
     <div id="wallpaper-next" class="wallpaper-layer"></div>
     <div id="wallpaper-overlay"></div>
+    <div id="grain-overlay"></div>
   </div>
 
   <!-- Main content container -->
@@ -39,6 +51,22 @@
     <!-- Shortcuts element -->
     <div id="shortcuts-container" class="draggable-element" data-element-id="shortcuts">
       <div id="shortcuts-grid"></div>
+    </div>
+
+    <!-- Crypto ticker element -->
+    <div id="crypto-container" class="draggable-element" data-element-id="crypto">
+      <div class="crypto-ticker">
+        <div class="crypto-item" data-crypto="BTCUSDT">
+          <span class="crypto-symbol">BTC</span>
+          <span class="crypto-price">$--</span>
+          <span class="crypto-change">--%</span>
+        </div>
+        <div class="crypto-item" data-crypto="ETHUSDT">
+          <span class="crypto-symbol">ETH</span>
+          <span class="crypto-price">$--</span>
+          <span class="crypto-change">--%</span>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -166,6 +194,13 @@
         <h3>布局</h3>
         <div class="setting-item">
           <label class="toggle-label">
+            <span>自动隐藏控件</span>
+            <input type="checkbox" id="setting-auto-hide-controls" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="setting-item">
+          <label class="toggle-label">
             <span>编辑模式</span>
             <input type="checkbox" id="setting-edit-mode">
             <span class="toggle-slider"></span>
@@ -197,6 +232,10 @@
             <label class="checkbox-label">
               <input type="checkbox" id="show-shortcuts" checked>
               <span>快捷链接</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" id="show-crypto" checked>
+              <span>加密货币行情</span>
             </label>
           </div>
         </div>
@@ -277,6 +316,7 @@
   <script src="js/quote.js"></script>
   <script src="js/search.js"></script>
   <script src="js/shortcuts.js"></script>
+  <script src="js/crypto.js"></script>
   <script src="js/drag.js"></script>
   <script src="js/settings.js"></script>
   <script src="js/newtab.js"></script>

@@ -177,7 +177,6 @@ const Wallpaper = {
     try {
       // Check if API key is configured
       if (!settings.pexelsApiKey) {
-        console.warn('Pexels API key not configured, falling back to Bing');
         await this.loadBingWallpaper(settings);
         return;
       }
@@ -196,7 +195,6 @@ const Wallpaper = {
       }
 
       if (!wallpapers.length) {
-        console.warn('No Pexels wallpapers available, falling back to Bing');
         await this.loadBingWallpaper(settings);
         return;
       }

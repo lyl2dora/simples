@@ -22,7 +22,8 @@
       Wallpaper.init(),
       Quote.init(),
       Search.init(),
-      Shortcuts.init()
+      Shortcuts.init(),
+      Crypto.init()
     ]);
 
     // Phase 4: Settings (after all modules ready)
@@ -43,4 +44,5 @@ function applyInitialVisibility(settings) {
   document.getElementById('search-container').classList.toggle('hidden', settings.showSearch === false);
   document.getElementById('quote-container').classList.toggle('hidden', settings.showQuote === false);
   document.getElementById('shortcuts-container').classList.toggle('hidden', settings.showShortcuts === false);
+  document.getElementById('crypto-container').classList.toggle('hidden', settings.showCrypto === false);
 }

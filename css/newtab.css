@@ -59,6 +59,21 @@ body {
   pointer-events: none;
 }
 
+/* Vector grain texture overlay */
+#grain-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0.08;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 200px 200px;
+  mix-blend-mode: overlay;
+}
+
 /* Main container */
 #main-container {
   position: relative;
@@ -286,6 +301,61 @@ body.edit-mode .guide-line.show {
   content: '—— ';
 }
 
+/* Crypto ticker styles */
+#crypto-container {
+  text-align: center;
+}
+
+.crypto-ticker {
+  display: flex;
+  gap: 24px;
+  padding: 12px 20px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 16px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.crypto-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.crypto-symbol {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+  text-transform: uppercase;
+}
+
+.crypto-price {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #fff;
+  min-width: 100px;
+}
+
+.crypto-change {
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 2px 6px;
+  border-radius: 4px;
+  min-width: 60px;
+  text-align: center;
+}
+
+.crypto-change.positive {
+  color: #4ade80;
+  background: rgba(74, 222, 128, 0.15);
+}
+
+.crypto-change.negative {
+  color: #f87171;
+  background: rgba(248, 113, 113, 0.15);
+}
+
 /* Shortcuts styles */
 #shortcuts-container {
   width: 100%;
@@ -392,12 +462,32 @@ body.edit-mode .guide-line.show {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.2s ease, transform 0.2s ease;
+  transition: background 0.2s ease, transform 0.2s ease, opacity 0.3s ease;
 }
 
 #settings-btn:hover {
   background: rgba(255, 255, 255, 0.25);
   transform: scale(1.1);
+}
+
+/* Auto-hide controls mode */
+body.auto-hide-controls #settings-btn {
+  opacity: 0;
+}
+
+body.auto-hide-controls:hover #settings-btn,
+body.auto-hide-controls #settings-btn:focus {
+  opacity: 1;
+}
+
+body.auto-hide-controls .shortcut-item.add-shortcut {
+  opacity: 0;
+  transition: opacity 0.3s ease, background 0.2s ease, transform 0.2s ease;
+}
+
+body.auto-hide-controls #shortcuts-container:hover .shortcut-item.add-shortcut,
+body.auto-hide-controls .shortcut-item.add-shortcut:focus {
+  opacity: 1;
 }
 
 /* Wallpaper info button */

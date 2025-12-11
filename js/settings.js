@@ -49,6 +49,7 @@ const Settings = {
     document.getElementById('setting-shortcuts-per-row').value = settings.shortcutsPerRow;
 
     // Layout settings
+    document.getElementById('setting-auto-hide-controls').checked = settings.autoHideControls !== false;
     document.getElementById('setting-edit-mode').checked = settings.editMode;
     document.getElementById('setting-panel-opacity').value = settings.panelOpacity || 75;
     document.getElementById('panel-opacity-value').textContent = `${settings.panelOpacity || 75}%`;
@@ -56,12 +57,16 @@ const Settings = {
     document.getElementById('show-search').checked = settings.showSearch;
     document.getElementById('show-quote').checked = settings.showQuote;
     document.getElementById('show-shortcuts').checked = settings.showShortcuts;
+    document.getElementById('show-crypto').checked = settings.showCrypto !== false;
 
     // Apply panel opacity
     this.applyPanelOpacity(settings.panelOpacity || 75);
 
     // Apply visibility
     this.applyVisibility(settings);
+
+    // Apply auto-hide controls
+    this.applyAutoHideControls(settings.autoHideControls !== false);
 
     // Apply edit mode
     if (settings.editMode) {
@@ -126,6 +131,7 @@ const Settings = {
     document.getElementById('search-container').classList.toggle('hidden', settings.showSearch === false);
     document.getElementById('quote-container').classList.toggle('hidden', settings.showQuote === false);
     document.getElementById('shortcuts-container').classList.toggle('hidden', settings.showShortcuts === false);
+    document.getElementById('crypto-container').classList.toggle('hidden', settings.showCrypto === false);
   },
 
   /**
@@ -133,6 +139,13 @@ const Settings = {
    */
   applyPanelOpacity(opacity) {
     document.documentElement.style.setProperty('--panel-opacity', opacity / 100);
+  },
+
+  /**
+   * Apply auto-hide controls mode
+   */
+  applyAutoHideControls(enabled) {
+    document.body.classList.toggle('auto-hide-controls', enabled);
   },
 
   /**
@@ -231,6 +244,12 @@ const Settings = {
       await Shortcuts.updateSettings();
     });
 
+    // Auto-hide controls toggle
+    document.getElementById('setting-auto-hide-controls').addEventListener('change', async (e) => {
+      await Storage.saveSetting('autoHideControls', e.target.checked);
+      this.applyAutoHideControls(e.target.checked);
+    });
+
     // Edit mode toggle
     document.getElementById('setting-edit-mode').addEventListener('change', async (e) => {
       await Drag.toggleEditMode(e.target.checked);
@@ -255,11 +274,20 @@ const Settings = {
     });
 
     // Visibility toggles
-    ['clock', 'search', 'quote', 'shortcuts'].forEach(element => {
+    ['clock', 'search', 'quote', 'shortcuts', 'crypto'].forEach(element => {
       document.getElementById(`show-${element}`).addEventListener('change', async (e) => {
         const key = `show${element.charAt(0).toUpperCase() + element.slice(1)}`;
         await Storage.saveSetting(key, e.target.checked);
         document.getElementById(`${element}-container`).classList.toggle('hidden', !e.target.checked);
+
+        // Handle crypto WebSocket connection
+        if (element === 'crypto') {
+          if (e.target.checked) {
+            Crypto.connect();
+          } else {
+            Crypto.disconnect();
+          }
+        }
       });
     });
 
