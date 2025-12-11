@@ -31,8 +31,8 @@ const Storage = {
       clock: { x: 50, y: 25 },
       search: { x: 50, y: 50 },
       quote: { x: 50, y: 68 },
-      shortcuts: { x: 50, y: 85 },
-      crypto: { x: 50, y: 10 }
+      shortcuts: { x: 50, y: 82 },
+      crypto: { x: 50, y: 95 }
     },
 
     // Visibility settings
