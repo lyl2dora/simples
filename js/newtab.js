@@ -23,7 +23,8 @@
       Quote.init(),
       Search.init(),
       Shortcuts.init(),
-      Crypto.init()
+      Crypto.init(),
+      Calendar.init()
     ]);
 
     // Phase 4: Settings (after all modules ready)
@@ -45,4 +46,5 @@ function applyInitialVisibility(settings) {
   document.getElementById('quote-container').classList.toggle('hidden', settings.showQuote === false);
   document.getElementById('shortcuts-container').classList.toggle('hidden', settings.showShortcuts === false);
   document.getElementById('crypto-container').classList.toggle('hidden', settings.showCrypto === false);
+  document.getElementById('calendar-container').classList.toggle('hidden', settings.showCalendar === false);
 }

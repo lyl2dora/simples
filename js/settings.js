@@ -58,6 +58,7 @@ const Settings = {
     document.getElementById('show-quote').checked = settings.showQuote;
     document.getElementById('show-shortcuts').checked = settings.showShortcuts;
     document.getElementById('show-crypto').checked = settings.showCrypto !== false;
+    document.getElementById('show-calendar').checked = settings.showCalendar !== false;
 
     // Apply panel opacity
     this.applyPanelOpacity(settings.panelOpacity || 75);
@@ -132,6 +133,7 @@ const Settings = {
     document.getElementById('quote-container').classList.toggle('hidden', settings.showQuote === false);
     document.getElementById('shortcuts-container').classList.toggle('hidden', settings.showShortcuts === false);
     document.getElementById('crypto-container').classList.toggle('hidden', settings.showCrypto === false);
+    document.getElementById('calendar-container').classList.toggle('hidden', settings.showCalendar === false);
   },
 
   /**
@@ -274,7 +276,7 @@ const Settings = {
     });
 
     // Visibility toggles
-    ['clock', 'search', 'quote', 'shortcuts', 'crypto'].forEach(element => {
+    ['clock', 'search', 'quote', 'shortcuts', 'crypto', 'calendar'].forEach(element => {
       document.getElementById(`show-${element}`).addEventListener('change', async (e) => {
         const key = `show${element.charAt(0).toUpperCase() + element.slice(1)}`;
         await Storage.saveSetting(key, e.target.checked);
