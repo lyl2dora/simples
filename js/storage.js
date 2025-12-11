@@ -31,14 +31,19 @@ const Storage = {
       clock: { x: 50, y: 25 },
       search: { x: 50, y: 50 },
       quote: { x: 50, y: 68 },
-      shortcuts: { x: 50, y: 85 }
+      shortcuts: { x: 50, y: 85 },
+      crypto: { x: 50, y: 10 }
     },
 
     // Visibility settings
     showClock: true,
     showSearch: true,
     showQuote: true,
-    showShortcuts: true
+    showShortcuts: true,
+    showCrypto: true,
+
+    // UI settings
+    autoHideControls: true  // Auto-hide add button and settings icon
   },
 
   /**
