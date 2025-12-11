@@ -462,11 +462,7 @@ body.edit-mode .guide-line.show {
   display: flex;
   gap: 24px;
   padding: 12px 20px;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-radius: 16px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
 }
 
 .crypto-item {
