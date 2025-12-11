@@ -307,8 +307,12 @@ body.edit-mode .guide-line.show {
 }
 
 .calendar-content {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 16px;
   padding: 16px;
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
 .calendar-header {
@@ -323,17 +327,17 @@ body.edit-mode .guide-line.show {
   height: 28px;
   border: none;
   border-radius: 50%;
-  background: transparent;
+  background: rgba(255, 255, 255, 0.1);
   color: rgba(255, 255, 255, 0.8);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: color 0.2s ease;
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5));
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
 .calendar-nav:hover {
+  background: rgba(255, 255, 255, 0.2);
   color: #fff;
 }
 
@@ -347,7 +351,6 @@ body.edit-mode .guide-line.show {
 
 .calendar-title:hover {
   background: rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
 }
 
 .calendar-year-month {
