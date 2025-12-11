@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "自定义新标签页",
   "version": "1.0.1",
-  "description": "简洁美观的新标签页，支持Bing/Pexels壁纸、可拖拽布局、快捷链接、搜索建议和一言",
+  "description": "简洁美观的新标签页，支持Bing/Pexels壁纸、可拖拽布局、快捷链接、搜索建议和一言，同时包含了日历与加密货币行情",
   "permissions": [
     "storage",
     "search",
