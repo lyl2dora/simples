@@ -7,17 +7,6 @@
   <link rel="stylesheet" href="css/newtab.css">
 </head>
 <body>
-  <!-- SVG grain filter -->
-  <svg style="display: none;">
-    <defs>
-      <filter id="grain-filter">
-        <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4" stitchTiles="stitch" result="noise"/>
-        <feColorMatrix type="saturate" values="0" in="noise" result="mono"/>
-        <feBlend in="SourceGraphic" in2="mono" mode="multiply"/>
-      </filter>
-    </defs>
-  </svg>
-
   <!-- Wallpaper layers -->
   <div id="wallpaper-container">
     <div id="wallpaper-current" class="wallpaper-layer"></div>
