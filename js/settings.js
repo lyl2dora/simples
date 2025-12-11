@@ -64,7 +64,7 @@ const Settings = {
     this.applyPanelOpacity(settings.panelOpacity || 75);
 
     // Apply visibility
-    this.applyVisibility(settings);
+    Storage.applyVisibility(settings);
 
     // Apply auto-hide controls
     this.applyAutoHideControls(settings.autoHideControls !== false);
@@ -121,19 +121,6 @@ const Settings = {
         }
       });
     });
-  },
-
-  /**
-   * Apply element visibility
-   * Use === false to ensure undefined is treated as true (visible)
-   */
-  applyVisibility(settings) {
-    document.getElementById('clock-container').classList.toggle('hidden', settings.showClock === false);
-    document.getElementById('search-container').classList.toggle('hidden', settings.showSearch === false);
-    document.getElementById('quote-container').classList.toggle('hidden', settings.showQuote === false);
-    document.getElementById('shortcuts-container').classList.toggle('hidden', settings.showShortcuts === false);
-    document.getElementById('crypto-container').classList.toggle('hidden', settings.showCrypto === false);
-    document.getElementById('calendar-container').classList.toggle('hidden', settings.showCalendar === false);
   },
 
   /**

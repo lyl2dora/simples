@@ -296,6 +296,19 @@ const Storage = {
    */
   async resetPositions() {
     await this.saveSetting('positions', this.defaults.positions);
+  },
+
+  /**
+   * Apply element visibility settings to DOM
+   * Uses === false to ensure undefined is treated as visible
+   */
+  applyVisibility(settings) {
+    document.getElementById('clock-container').classList.toggle('hidden', settings.showClock === false);
+    document.getElementById('search-container').classList.toggle('hidden', settings.showSearch === false);
+    document.getElementById('quote-container').classList.toggle('hidden', settings.showQuote === false);
+    document.getElementById('shortcuts-container').classList.toggle('hidden', settings.showShortcuts === false);
+    document.getElementById('crypto-container').classList.toggle('hidden', settings.showCrypto === false);
+    document.getElementById('calendar-container').classList.toggle('hidden', settings.showCalendar === false);
   }
 };
 
