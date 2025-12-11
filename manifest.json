@@ -14,7 +14,8 @@
     "https://cn.bing.com/*",
     "https://v1.hitokoto.cn/*",
     "https://suggestqueries.google.com/*",
-    "https://api.pexels.com/*"
+    "https://api.pexels.com/*",
+    "wss://stream.binance.com/*"
   ],
   "chrome_url_overrides": {
     "newtab": "newtab.html"
