@@ -10,7 +10,8 @@ const Crypto = {
   },
   reconnectAttempts: 0,
   maxReconnectAttempts: 5,
-  reconnectDelay: 3000,
+  reconnectDelay: 3000,      // 初始重连延迟
+  maxReconnectDelay: 30000,  // 最大重连延迟
 
   /**
    * Initialize crypto ticker
@@ -61,10 +62,15 @@ const Crypto = {
     };
 
     this.ws.onclose = () => {
-      // Attempt to reconnect
+      // Attempt to reconnect with exponential backoff
       if (this.reconnectAttempts < this.maxReconnectAttempts) {
         this.reconnectAttempts++;
-        setTimeout(() => this.connect(), this.reconnectDelay);
+        // 指数退避：3s, 6s, 12s, 24s, 30s (上限)
+        const delay = Math.min(
+          this.reconnectDelay * Math.pow(2, this.reconnectAttempts - 1),
+          this.maxReconnectDelay
+        );
+        setTimeout(() => this.connect(), delay);
       }
     };
   },
