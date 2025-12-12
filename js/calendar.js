@@ -118,11 +118,11 @@ const Calendar = {
       </div>
     `;
 
-    // Build weekday header
-    const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
+    // Build weekday header (从周一开始)
+    const weekdays = ['一', '二', '三', '四', '五', '六', '日'];
     const weekdayHtml = `
       <div class="calendar-weekdays">
-        ${weekdays.map((day, i) => `<div class="calendar-weekday${i === 0 || i === 6 ? ' weekend' : ''}">${day}</div>`).join('')}
+        ${weekdays.map((day, i) => `<div class="calendar-weekday${i >= 5 ? ' weekend' : ''}">${day}</div>`).join('')}
       </div>
     `;
 
@@ -141,7 +141,8 @@ const Calendar = {
 
     // Get first day of month and days in month
     const firstDay = new Date(year, month - 1, 1);
-    const startWeekday = firstDay.getDay();
+    // 将周日(0)转换为6，周一(1)转换为0，以此类推（周一开始）
+    const startWeekday = (firstDay.getDay() + 6) % 7;
     const daysInMonth = new Date(year, month, 0).getDate();
 
     // Get previous month info
