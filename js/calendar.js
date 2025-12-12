@@ -18,29 +18,35 @@ const Calendar = {
     this.currentYear = now.getFullYear();
     this.currentMonth = now.getMonth() + 1;
 
-    this.render();
     this.bindEvents();
+    this.render();
   },
 
   /**
-   * Bind event listeners
+   * Bind event listeners (使用事件委托，只需绑定一次)
    */
   bindEvents() {
-    // Navigation buttons
-    this.container.querySelector('.calendar-prev')?.addEventListener('click', (e) => {
-      e.stopPropagation();
-      this.prevMonth();
-    });
+    this.container.addEventListener('click', (e) => {
+      // 上个月按钮
+      if (e.target.closest('.calendar-prev')) {
+        e.stopPropagation();
+        this.prevMonth();
+        return;
+      }
 
-    this.container.querySelector('.calendar-next')?.addEventListener('click', (e) => {
-      e.stopPropagation();
-      this.nextMonth();
-    });
+      // 下个月按钮
+      if (e.target.closest('.calendar-next')) {
+        e.stopPropagation();
+        this.nextMonth();
+        return;
+      }
 
-    // Click on header to return to current month
-    this.container.querySelector('.calendar-title')?.addEventListener('click', (e) => {
-      e.stopPropagation();
-      this.goToToday();
+      // 标题点击返回今天
+      if (e.target.closest('.calendar-title')) {
+        e.stopPropagation();
+        this.goToToday();
+        return;
+      }
     });
   },
 
@@ -124,9 +130,6 @@ const Calendar = {
     const daysHtml = this.buildDaysGrid(today);
 
     this.container.querySelector('.calendar-content').innerHTML = headerHtml + weekdayHtml + daysHtml;
-
-    // Re-bind events after render
-    this.bindEvents();
   },
 
   /**

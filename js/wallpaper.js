@@ -19,12 +19,22 @@ const Wallpaper = {
     await this.showLastWallpaperInstantly();
 
     // Load wallpaper based on source
-    if (settings.wallpaperSource === 'bing') {
-      await this.loadBingWallpaper(settings);
-    } else if (settings.wallpaperSource === 'pexels') {
-      await this.loadPexelsWallpaper(settings);
-    } else {
-      await this.loadLocalWallpaper(settings);
+    await this.loadWallpaperBySource(settings);
+  },
+
+  /**
+   * 根据壁纸源加载壁纸
+   */
+  async loadWallpaperBySource(settings) {
+    switch (settings.wallpaperSource) {
+      case 'bing':
+        await this.loadBingWallpaper(settings);
+        break;
+      case 'pexels':
+        await this.loadPexelsWallpaper(settings);
+        break;
+      default:
+        await this.loadLocalWallpaper(settings);
     }
   },
 
@@ -400,13 +410,7 @@ const Wallpaper = {
    */
   async refresh() {
     const settings = await Storage.getSettings();
-    if (settings.wallpaperSource === 'bing') {
-      await this.loadBingWallpaper(settings);
-    } else if (settings.wallpaperSource === 'pexels') {
-      await this.loadPexelsWallpaper(settings);
-    } else {
-      await this.loadLocalWallpaper(settings);
-    }
+    await this.loadWallpaperBySource(settings);
   }
 };
 

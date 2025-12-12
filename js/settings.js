@@ -8,6 +8,17 @@ const Settings = {
   isOpen: false,
 
   /**
+   * 当 Pexels 设置变更时，清除缓存并刷新壁纸
+   */
+  async refreshPexelsIfActive() {
+    const settings = await Storage.getSettings();
+    if (settings.wallpaperSource === 'pexels') {
+      await Storage.savePexelsCache([], 1);
+      await Wallpaper.refresh();
+    }
+  },
+
+  /**
    * Initialize settings
    */
   async init() {
@@ -185,23 +196,13 @@ const Settings = {
     // Pexels search query change
     document.getElementById('setting-pexels-query').addEventListener('change', async (e) => {
       await Storage.saveSetting('pexelsSearchQuery', e.target.value.trim() || 'nature wallpaper');
-      const settings = await Storage.getSettings();
-      if (settings.wallpaperSource === 'pexels') {
-        // Clear cache to fetch new results
-        await Storage.savePexelsCache([], 1);
-        await Wallpaper.refresh();
-      }
+      await this.refreshPexelsIfActive();
     });
 
     // Pexels orientation change
     document.getElementById('setting-pexels-orientation').addEventListener('change', async (e) => {
       await Storage.saveSetting('pexelsOrientation', e.target.value);
-      const settings = await Storage.getSettings();
-      if (settings.wallpaperSource === 'pexels') {
-        // Clear cache to fetch new results
-        await Storage.savePexelsCache([], 1);
-        await Wallpaper.refresh();
-      }
+      await this.refreshPexelsIfActive();
     });
 
     // Overlay opacity change
