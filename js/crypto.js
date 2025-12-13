@@ -1,5 +1,5 @@
 /**
- * Crypto module - handles cryptocurrency price ticker via Binance WebSocket
+ * 加密货币模块 - 通过 Binance WebSocket 处理加密货币价格行情
  */
 
 const Crypto = {
@@ -14,12 +14,12 @@ const Crypto = {
   maxReconnectDelay: 30000,  // 最大重连延迟
 
   /**
-   * Initialize crypto ticker
+   * 初始化加密货币行情
    */
   async init() {
     const settings = await Storage.getSettings();
 
-    // Check visibility
+    // 检查可见性
     if (settings.showCrypto === false) {
       document.getElementById('crypto-container').classList.add('hidden');
       return;
@@ -30,15 +30,15 @@ const Crypto = {
   },
 
   /**
-   * Connect to Binance WebSocket
+   * 连接到 Binance WebSocket
    */
   connect() {
-    // Close existing connection if any
+    // 如果存在连接，先关闭
     if (this.ws) {
       this.ws.close();
     }
 
-    // Subscribe to multiple streams
+    // 订阅多个数据流
     const streams = ['btcusdt@ticker', 'ethusdt@ticker'].join('/');
     this.ws = new WebSocket(`wss://stream.binance.com:9443/stream?streams=${streams}`);
 
@@ -53,16 +53,16 @@ const Crypto = {
           this.updatePrice(data.data);
         }
       } catch (error) {
-        console.error('Error parsing crypto data:', error);
+        console.error('解析加密货币数据出错:', error);
       }
     };
 
     this.ws.onerror = (error) => {
-      console.error('Crypto WebSocket error:', error);
+      console.error('加密货币 WebSocket 错误:', error);
     };
 
     this.ws.onclose = () => {
-      // Attempt to reconnect with exponential backoff
+      // 使用指数退避策略尝试重连
       if (this.reconnectAttempts < this.maxReconnectAttempts) {
         this.reconnectAttempts++;
         // 指数退避：3s, 6s, 12s, 24s, 30s (上限)
@@ -76,10 +76,10 @@ const Crypto = {
   },
 
   /**
-   * Update price from WebSocket data
+   * 从 WebSocket 数据更新价格
    */
   updatePrice(data) {
-    const symbol = data.s; // Symbol (e.g., BTCUSDT)
+    const symbol = data.s; // 交易对（如 BTCUSDT）
 
     if (this.prices[symbol]) {
       this.prices[symbol] = {
@@ -96,7 +96,7 @@ const Crypto = {
   },
 
   /**
-   * Update UI for a specific symbol
+   * 更新特定交易对的 UI
    */
   updateUI(symbol) {
     const data = this.prices[symbol];
@@ -120,7 +120,7 @@ const Crypto = {
   },
 
   /**
-   * Render initial UI
+   * 渲染初始 UI
    */
   render() {
     const btcEl = document.querySelector('[data-crypto="BTCUSDT"]');
@@ -138,7 +138,7 @@ const Crypto = {
   },
 
   /**
-   * Disconnect WebSocket
+   * 断开 WebSocket 连接
    */
   disconnect() {
     if (this.ws) {
@@ -148,7 +148,7 @@ const Crypto = {
   },
 
   /**
-   * Refresh connection
+   * 刷新连接
    */
   refresh() {
     this.disconnect();
@@ -157,5 +157,5 @@ const Crypto = {
   }
 };
 
-// Make available globally
+// 暴露到全局
 window.Crypto = Crypto;

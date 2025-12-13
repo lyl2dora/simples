@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="css/newtab.css">
 </head>
 <body>
-  <!-- Wallpaper layers -->
+  <!-- 壁纸图层 -->
   <div id="wallpaper-container">
     <div id="wallpaper-current" class="wallpaper-layer"></div>
     <div id="wallpaper-next" class="wallpaper-layer"></div>
@@ -15,15 +15,15 @@
     <div id="grain-overlay"></div>
   </div>
 
-  <!-- Main content container -->
+  <!-- 主内容容器 -->
   <div id="main-container">
-    <!-- Clock/Date element -->
+    <!-- 时钟/日期元素 -->
     <div id="clock-container" class="draggable-element" data-element-id="clock">
       <div id="time"></div>
       <div id="date"></div>
     </div>
 
-    <!-- Search box element -->
+    <!-- 搜索框元素 -->
     <div id="search-container" class="draggable-element" data-element-id="search">
       <div id="search-wrapper">
         <input type="text" id="search-input" placeholder="搜索" autocomplete="off">
@@ -31,18 +31,18 @@
       </div>
     </div>
 
-    <!-- Quote element -->
+    <!-- 一言元素 -->
     <div id="quote-container" class="draggable-element" data-element-id="quote">
       <p id="quote-text"></p>
       <p id="quote-source"></p>
     </div>
 
-    <!-- Shortcuts element -->
+    <!-- 快捷链接元素 -->
     <div id="shortcuts-container" class="draggable-element" data-element-id="shortcuts">
       <div id="shortcuts-grid"></div>
     </div>
 
-    <!-- Crypto ticker element -->
+    <!-- 加密货币行情元素 -->
     <div id="crypto-container" class="draggable-element" data-element-id="crypto">
       <div class="crypto-ticker">
         <div class="crypto-item" data-crypto="BTCUSDT">
@@ -58,16 +58,16 @@
       </div>
     </div>
 
-    <!-- Calendar element -->
+    <!-- 日历元素 -->
     <div id="calendar-container" class="draggable-element" data-element-id="calendar">
       <div class="calendar-content"></div>
     </div>
   </div>
 
-  <!-- Edit mode hint -->
+  <!-- 编辑模式提示 -->
   <div id="edit-mode-hint">编辑模式：拖动元素调整位置，右键点击退出</div>
 
-  <!-- Settings button with hover zone -->
+  <!-- 设置按钮和悬停区域 -->
   <div id="settings-zone">
     <button id="settings-btn" title="设置">
       <svg viewBox="0 0 24 24" width="24" height="24">
@@ -76,7 +76,7 @@
     </button>
   </div>
 
-  <!-- Wallpaper info button -->
+  <!-- 壁纸信息按钮 -->
   <button id="wallpaper-info-btn" title="壁纸信息">
     <svg viewBox="0 0 24 24" width="20" height="20">
       <path fill="currentColor" d="M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z"/>
@@ -84,7 +84,7 @@
   </button>
   <div id="wallpaper-info-tooltip"></div>
 
-  <!-- Settings sidebar -->
+  <!-- 设置侧边栏 -->
   <div id="settings-overlay"></div>
   <div id="settings-sidebar">
     <div id="settings-header">
@@ -96,7 +96,7 @@
       </button>
     </div>
     <div id="settings-content">
-      <!-- Wallpaper settings -->
+      <!-- 壁纸设置 -->
       <section class="settings-section">
         <h3>壁纸</h3>
         <div class="setting-item">
@@ -151,7 +151,7 @@
         </div>
       </section>
 
-      <!-- Search settings -->
+      <!-- 搜索设置 -->
       <section class="settings-section">
         <h3>搜索</h3>
         <div class="setting-item">
@@ -170,7 +170,7 @@
         </div>
       </section>
 
-      <!-- Shortcuts settings -->
+      <!-- 快捷链接设置 -->
       <section class="settings-section">
         <h3>快捷链接</h3>
         <div class="setting-item">
@@ -185,7 +185,7 @@
         </div>
       </section>
 
-      <!-- Layout settings -->
+      <!-- 布局设置 -->
       <section class="settings-section">
         <h3>布局</h3>
         <div class="setting-item">
@@ -241,7 +241,7 @@
         </div>
       </section>
 
-      <!-- Data settings -->
+      <!-- 数据设置 -->
       <section class="settings-section">
         <h3>数据</h3>
         <div class="setting-item button-group">
@@ -253,13 +253,13 @@
     </div>
   </div>
 
-  <!-- Context menu for shortcuts -->
+  <!-- 快捷链接上下文菜单 -->
   <div id="shortcut-context-menu" class="context-menu">
     <div class="context-menu-item" data-action="edit">编辑</div>
     <div class="context-menu-item" data-action="delete">删除</div>
   </div>
 
-  <!-- Shortcut edit dialog -->
+  <!-- 快捷链接编辑对话框 -->
   <div id="shortcut-dialog-overlay"></div>
   <div id="shortcut-dialog">
     <h3 id="shortcut-dialog-title">添加快捷链接</h3>
@@ -288,7 +288,7 @@
     </div>
   </div>
 
-  <!-- Add shortcut button (shown on empty slot or as last item) -->
+  <!-- 添加快捷链接按钮（显示在空位或作为最后一项） -->
   <template id="shortcut-template">
     <div class="shortcut-item" data-id="">
       <div class="shortcut-icon">

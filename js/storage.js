@@ -1,32 +1,32 @@
 /**
- * Storage module - handles chrome.storage.sync and chrome.storage.local
+ * 存储模块 - 处理 chrome.storage.sync 和 chrome.storage.local
  */
 
 const Storage = {
-  // Default settings
+  // 默认设置
   defaults: {
-    // Wallpaper settings
-    wallpaperSource: 'bing', // 'bing', 'pexels', or 'local'
+    // 壁纸设置
+    wallpaperSource: 'bing', // 'bing', 'pexels', 或 'local'
     wallpaperMode: 'random', // 'random', 'sequential', 'daily'
     overlayOpacity: 30,
     currentWallpaperIndex: 0,
 
-    // Pexels settings
+    // Pexels 设置
     pexelsApiKey: '',
     pexelsSearchQuery: 'nature wallpaper',
     pexelsOrientation: 'landscape',
 
-    // Search settings
-    searchTarget: 'new', // 'new' or 'current'
+    // 搜索设置
+    searchTarget: 'new', // 'new' 或 'current'
     searchSuggestions: true,
 
-    // Shortcuts settings
+    // 快捷链接设置
     shortcutsPerRow: 6,
     shortcuts: [],
 
-    // Layout settings
+    // 布局设置
     editMode: false,
-    panelOpacity: 75, // Panel background opacity (0-100)
+    panelOpacity: 75, // 面板背景透明度 (0-100)
     positions: {
       clock: { x: 50, y: 15 },
       search: { x: 50, y: 38 },
@@ -36,7 +36,7 @@ const Storage = {
       crypto: { x: 85, y: 95 }
     },
 
-    // Visibility settings
+    // 可见性设置
     showClock: true,
     showSearch: true,
     showQuote: true,
@@ -44,12 +44,12 @@ const Storage = {
     showCrypto: true,
     showCalendar: true,
 
-    // UI settings
-    autoHideControls: true  // Auto-hide add button and settings icon
+    // UI 设置
+    autoHideControls: true  // 自动隐藏添加按钮和设置图标
   },
 
   /**
-   * Get settings from sync storage
+   * 从同步存储获取设置
    */
   async getSettings() {
     return new Promise((resolve) => {
@@ -60,7 +60,7 @@ const Storage = {
   },
 
   /**
-   * Save settings to sync storage
+   * 保存设置到同步存储
    */
   async saveSettings(settings) {
     return new Promise((resolve, reject) => {
@@ -75,7 +75,7 @@ const Storage = {
   },
 
   /**
-   * Get single setting value
+   * 获取单个设置值
    */
   async getSetting(key) {
     const settings = await this.getSettings();
@@ -83,14 +83,14 @@ const Storage = {
   },
 
   /**
-   * Save single setting value
+   * 保存单个设置值
    */
   async saveSetting(key, value) {
     return this.saveSettings({ [key]: value });
   },
 
   /**
-   * Get data from local storage (for images/cache)
+   * 从本地存储获取数据（用于图片/缓存）
    */
   async getLocal(keys) {
     return new Promise((resolve) => {
@@ -101,7 +101,7 @@ const Storage = {
   },
 
   /**
-   * Save data to local storage
+   * 保存数据到本地存储
    */
   async saveLocal(data) {
     return new Promise((resolve, reject) => {
@@ -116,7 +116,7 @@ const Storage = {
   },
 
   /**
-   * Remove data from local storage
+   * 从本地存储删除数据
    */
   async removeLocal(keys) {
     return new Promise((resolve) => {
@@ -127,7 +127,7 @@ const Storage = {
   },
 
   /**
-   * Get cached Bing wallpapers
+   * 获取缓存的 Bing 壁纸
    */
   async getBingCache() {
     const result = await this.getLocal(['bingWallpapers', 'bingCacheDate']);
@@ -138,7 +138,7 @@ const Storage = {
   },
 
   /**
-   * Save Bing wallpapers cache
+   * 保存 Bing 壁纸缓存
    */
   async saveBingCache(wallpapers) {
     await this.saveLocal({
@@ -148,7 +148,7 @@ const Storage = {
   },
 
   /**
-   * Get cached Pexels wallpapers
+   * 获取缓存的 Pexels 壁纸
    */
   async getPexelsCache() {
     const result = await this.getLocal(['pexelsWallpapers', 'pexelsCacheDate', 'pexelsCachePage']);
@@ -160,7 +160,7 @@ const Storage = {
   },
 
   /**
-   * Save Pexels wallpapers cache
+   * 保存 Pexels 壁纸缓存
    */
   async savePexelsCache(wallpapers, page) {
     await this.saveLocal({
@@ -171,7 +171,7 @@ const Storage = {
   },
 
   /**
-   * Get last displayed wallpaper (for instant display on load)
+   * 获取上次显示的壁纸（用于加载时即时显示）
    */
   async getLastWallpaper() {
     const result = await this.getLocal(['lastWallpaperUrl', 'lastWallpaperAvgColor']);
@@ -182,7 +182,7 @@ const Storage = {
   },
 
   /**
-   * Save last displayed wallpaper
+   * 保存上次显示的壁纸
    */
   async saveLastWallpaper(url, avgColor) {
     await this.saveLocal({
@@ -192,7 +192,7 @@ const Storage = {
   },
 
   /**
-   * Get local wallpapers (stored as base64)
+   * 获取本地壁纸（存储为 base64）
    */
   async getLocalWallpapers() {
     const result = await this.getLocal(['localWallpapers']);
@@ -200,14 +200,14 @@ const Storage = {
   },
 
   /**
-   * Save local wallpapers
+   * 保存本地壁纸
    */
   async saveLocalWallpapers(wallpapers) {
     await this.saveLocal({ localWallpapers: wallpapers });
   },
 
   /**
-   * Get shortcut icons (stored locally due to size)
+   * 获取快捷链接图标（由于大小原因存储在本地）
    */
   async getShortcutIcons() {
     const result = await this.getLocal(['shortcutIcons']);
@@ -215,7 +215,7 @@ const Storage = {
   },
 
   /**
-   * Save shortcut icon
+   * 保存快捷链接图标
    */
   async saveShortcutIcon(id, base64Data) {
     const icons = await this.getShortcutIcons();
@@ -224,7 +224,7 @@ const Storage = {
   },
 
   /**
-   * Remove shortcut icon
+   * 删除快捷链接图标
    */
   async removeShortcutIcon(id) {
     const icons = await this.getShortcutIcons();
@@ -233,7 +233,7 @@ const Storage = {
   },
 
   /**
-   * Get cached quote
+   * 获取缓存的一言
    */
   async getCachedQuote() {
     const result = await this.getLocal(['quoteCache']);
@@ -241,14 +241,14 @@ const Storage = {
   },
 
   /**
-   * Save quote to cache
+   * 保存一言到缓存
    */
   async saveQuoteCache(quoteData) {
     await this.saveLocal({ quoteCache: quoteData });
   },
 
   /**
-   * Export all configuration
+   * 导出所有配置
    */
   async exportConfig() {
     const syncSettings = await this.getSettings();
@@ -266,41 +266,41 @@ const Storage = {
   },
 
   /**
-   * Import configuration
+   * 导入配置
    */
   async importConfig(config) {
     if (!config || !config.version) {
-      throw new Error('Invalid configuration file');
+      throw new Error('无效的配置文件');
     }
 
-    // Import sync settings
+    // 导入同步设置
     if (config.sync) {
       await this.saveSettings(config.sync);
     }
 
-    // Import local data
+    // 导入本地数据
     if (config.local) {
       await this.saveLocal(config.local);
     }
   },
 
   /**
-   * Reset to defaults
+   * 重置为默认值
    */
   async resetToDefaults() {
     await this.saveSettings(this.defaults);
   },
 
   /**
-   * Reset positions only
+   * 仅重置位置
    */
   async resetPositions() {
     await this.saveSetting('positions', this.defaults.positions);
   },
 
   /**
-   * Apply element visibility settings to DOM
-   * Uses === false to ensure undefined is treated as visible
+   * 将元素可见性设置应用到 DOM
+   * 使用 === false 确保 undefined 被视为可见
    */
   applyVisibility(settings) {
     document.getElementById('clock-container').classList.toggle('hidden', settings.showClock === false);
@@ -312,5 +312,5 @@ const Storage = {
   }
 };
 
-// Make available globally
+// 暴露到全局
 window.Storage = Storage;

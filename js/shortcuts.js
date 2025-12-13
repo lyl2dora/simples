@@ -1,5 +1,5 @@
 /**
- * Shortcuts module - handles quick link management
+ * 快捷链接模块 - 处理快捷链接管理
  */
 
 const Shortcuts = {
@@ -13,7 +13,7 @@ const Shortcuts = {
   icons: {},
 
   /**
-   * Initialize shortcuts
+   * 初始化快捷链接
    */
   async init() {
     this.gridElement = document.getElementById('shortcuts-grid');
@@ -31,31 +31,31 @@ const Shortcuts = {
   },
 
   /**
-   * Set grid columns
+   * 设置网格列数
    */
   setGridColumns(count) {
     this.gridElement.style.setProperty('--shortcuts-per-row', count);
   },
 
   /**
-   * Render shortcuts
+   * 渲染快捷链接
    */
   render() {
     this.gridElement.innerHTML = '';
 
-    // Render existing shortcuts
+    // 渲染现有快捷链接
     this.shortcuts.forEach(shortcut => {
       const item = this.createShortcutElement(shortcut);
       this.gridElement.appendChild(item);
     });
 
-    // Add "add" button
+    // 添加"添加"按钮
     const addButton = this.createAddButton();
     this.gridElement.appendChild(addButton);
   },
 
   /**
-   * Create shortcut element
+   * 创建快捷链接元素
    */
   createShortcutElement(shortcut) {
     const template = document.getElementById('shortcut-template');
@@ -71,17 +71,17 @@ const Shortcuts = {
     nameEl.textContent = shortcut.name;
     nameEl.title = shortcut.name;
 
-    // Set icon
+    // 设置图标
     this.setIcon(iconImg, iconLetter, shortcut);
 
-    // Click to open link
+    // 点击打开链接
     item.addEventListener('click', (e) => {
       if (!document.body.classList.contains('edit-mode')) {
         window.open(shortcut.url, '_blank');
       }
     });
 
-    // Right click for context menu
+    // 右键显示上下文菜单
     item.addEventListener('contextmenu', (e) => {
       e.preventDefault();
       this.showContextMenu(e, shortcut.id);
@@ -91,10 +91,10 @@ const Shortcuts = {
   },
 
   /**
-   * Set icon for shortcut using Chrome Favicon API
+   * 使用 Chrome Favicon API 设置快捷链接图标
    */
   async setIcon(imgEl, letterEl, shortcut) {
-    // Check for custom uploaded icon first
+    // 首先检查自定义上传的图标
     if (this.icons[shortcut.id]) {
       imgEl.src = this.icons[shortcut.id];
       imgEl.classList.remove('hidden');
@@ -102,14 +102,14 @@ const Shortcuts = {
       return;
     }
 
-    // Use Chrome Favicon API (requires "favicon" permission)
+    // 使用 Chrome Favicon API（需要 "favicon" 权限）
     const faviconUrl = `chrome-extension://${chrome.runtime.id}/_favicon/?pageUrl=${encodeURIComponent(shortcut.url)}&size=64`;
 
     imgEl.classList.remove('hidden');
     letterEl.classList.add('hidden');
     imgEl.src = faviconUrl;
 
-    // Fallback to first letter if favicon fails to load
+    // 如果图标加载失败，回退到首字母
     imgEl.onerror = () => {
       imgEl.classList.add('hidden');
       letterEl.classList.remove('hidden');
@@ -118,7 +118,7 @@ const Shortcuts = {
   },
 
   /**
-   * Create add button
+   * 创建添加按钮
    */
   createAddButton() {
     const template = document.getElementById('add-shortcut-template');
@@ -133,10 +133,10 @@ const Shortcuts = {
   },
 
   /**
-   * Bind event listeners
+   * 绑定事件监听器
    */
   bindEvents() {
-    // Context menu actions
+    // 上下文菜单操作
     this.contextMenu.querySelectorAll('.context-menu-item').forEach(item => {
       item.addEventListener('click', () => {
         const action = item.dataset.action;
@@ -144,12 +144,12 @@ const Shortcuts = {
       });
     });
 
-    // Close context menu on click outside
+    // 点击外部关闭上下文菜单
     document.addEventListener('click', () => {
       this.hideContextMenu();
     });
 
-    // Dialog events
+    // 对话框事件
     this.dialogOverlay.addEventListener('click', () => {
       this.closeDialog();
     });
@@ -162,7 +162,7 @@ const Shortcuts = {
       this.saveShortcut();
     });
 
-    // Icon source tabs
+    // 图标来源切换
     document.querySelectorAll('.icon-tab').forEach(tab => {
       tab.addEventListener('click', () => {
         document.querySelectorAll('.icon-tab').forEach(t => t.classList.remove('active'));
@@ -174,14 +174,14 @@ const Shortcuts = {
       });
     });
 
-    // Icon upload
+    // 图标上传
     document.getElementById('shortcut-icon-input').addEventListener('change', (e) => {
       this.handleIconUpload(e.target.files[0]);
     });
   },
 
   /**
-   * Show context menu
+   * 显示上下文菜单
    */
   showContextMenu(e, shortcutId) {
     this.currentEditId = shortcutId;
@@ -191,14 +191,14 @@ const Shortcuts = {
   },
 
   /**
-   * Hide context menu
+   * 隐藏上下文菜单
    */
   hideContextMenu() {
     this.contextMenu.classList.remove('show');
   },
 
   /**
-   * Handle context menu action
+   * 处理上下文菜单操作
    */
   handleContextMenuAction(action) {
     this.hideContextMenu();
@@ -214,7 +214,7 @@ const Shortcuts = {
   },
 
   /**
-   * Open add/edit dialog
+   * 打开添加/编辑对话框
    */
   openDialog(editId = null) {
     this.currentEditId = editId;
@@ -224,7 +224,7 @@ const Shortcuts = {
     const urlInput = document.getElementById('shortcut-url-input');
     const iconPreview = document.getElementById('icon-preview');
 
-    // Reset form
+    // 重置表单
     nameInput.value = '';
     urlInput.value = '';
     iconPreview.innerHTML = '';
@@ -240,10 +240,10 @@ const Shortcuts = {
         nameInput.value = shortcut.name;
         urlInput.value = shortcut.url;
 
-        // Show custom icon if exists
+        // 如果存在自定义图标则显示
         if (this.icons[editId]) {
           document.querySelector('.icon-tab[data-source="upload"]').click();
-          iconPreview.innerHTML = `<img src="${this.icons[editId]}" alt="Icon">`;
+          iconPreview.innerHTML = `<img src="${this.icons[editId]}" alt="图标">`;
         }
       }
     } else {
@@ -256,7 +256,7 @@ const Shortcuts = {
   },
 
   /**
-   * Close dialog
+   * 关闭对话框
    */
   closeDialog() {
     this.dialog.classList.remove('show');
@@ -265,7 +265,7 @@ const Shortcuts = {
   },
 
   /**
-   * Handle icon upload
+   * 处理图标上传
    */
   handleIconUpload(file) {
     if (!file) return;
@@ -273,14 +273,14 @@ const Shortcuts = {
     const reader = new FileReader();
     reader.onload = (e) => {
       const iconPreview = document.getElementById('icon-preview');
-      iconPreview.innerHTML = `<img src="${e.target.result}" alt="Icon">`;
+      iconPreview.innerHTML = `<img src="${e.target.result}" alt="图标">`;
       iconPreview.dataset.iconData = e.target.result;
     };
     reader.readAsDataURL(file);
   },
 
   /**
-   * Save shortcut
+   * 保存快捷链接
    */
   async saveShortcut() {
     const nameInput = document.getElementById('shortcut-name-input');
@@ -295,12 +295,12 @@ const Shortcuts = {
       return;
     }
 
-    // Add protocol if missing
+    // 如果缺少协议则添加
     if (!url.match(/^https?:\/\//)) {
       url = 'https://' + url;
     }
 
-    // Validate URL
+    // 验证 URL
     try {
       new URL(url);
     } catch {
@@ -311,24 +311,24 @@ const Shortcuts = {
     const iconData = iconPreview.dataset.iconData;
 
     if (this.currentEditId) {
-      // Edit existing
+      // 编辑现有
       const index = this.shortcuts.findIndex(s => s.id === this.currentEditId);
       if (index !== -1) {
         this.shortcuts[index].name = name;
         this.shortcuts[index].url = url;
 
-        // Update icon if uploaded
+        // 如果上传了新图标则更新
         if (iconData) {
           await Storage.saveShortcutIcon(this.currentEditId, iconData);
           this.icons[this.currentEditId] = iconData;
         }
       }
     } else {
-      // Add new
+      // 添加新的
       const id = 'shortcut_' + Date.now();
       this.shortcuts.push({ id, name, url });
 
-      // Save icon if uploaded
+      // 如果上传了图标则保存
       if (iconData) {
         await Storage.saveShortcutIcon(id, iconData);
         this.icons[id] = iconData;
@@ -341,7 +341,7 @@ const Shortcuts = {
   },
 
   /**
-   * Delete shortcut
+   * 删除快捷链接
    */
   async deleteShortcut(id) {
     const index = this.shortcuts.findIndex(s => s.id === id);
@@ -349,7 +349,7 @@ const Shortcuts = {
       this.shortcuts.splice(index, 1);
       await Storage.saveSetting('shortcuts', this.shortcuts);
 
-      // Remove icon if exists
+      // 如果存在图标则删除
       if (this.icons[id]) {
         await Storage.removeShortcutIcon(id);
         delete this.icons[id];
@@ -360,7 +360,7 @@ const Shortcuts = {
   },
 
   /**
-   * Update settings
+   * 更新设置
    */
   async updateSettings() {
     this.settings = await Storage.getSettings();
@@ -368,5 +368,5 @@ const Shortcuts = {
   }
 };
 
-// Make available globally
+// 暴露到全局
 window.Shortcuts = Shortcuts;

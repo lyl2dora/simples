@@ -1,5 +1,5 @@
 /**
- * Calendar module - Monthly calendar with Chinese lunar calendar support
+ * 日历模块 - 带中国农历支持的月历
  */
 
 const Calendar = {
@@ -8,7 +8,7 @@ const Calendar = {
   currentMonth: null,
 
   /**
-   * Initialize calendar
+   * 初始化日历
    */
   async init() {
     this.container = document.getElementById('calendar-container');
@@ -23,7 +23,7 @@ const Calendar = {
   },
 
   /**
-   * Bind event listeners (使用事件委托，只需绑定一次)
+   * 绑定事件监听器（使用事件委托，只需绑定一次）
    */
   bindEvents() {
     this.container.addEventListener('click', (e) => {
@@ -51,7 +51,7 @@ const Calendar = {
   },
 
   /**
-   * Go to previous month
+   * 跳转到上个月
    */
   prevMonth() {
     this.currentMonth--;
@@ -63,7 +63,7 @@ const Calendar = {
   },
 
   /**
-   * Go to next month
+   * 跳转到下个月
    */
   nextMonth() {
     this.currentMonth++;
@@ -75,7 +75,7 @@ const Calendar = {
   },
 
   /**
-   * Go to today
+   * 跳转到今天
    */
   goToToday() {
     const now = new Date();
@@ -85,7 +85,7 @@ const Calendar = {
   },
 
   /**
-   * Render the calendar
+   * 渲染日历
    */
   render() {
     const now = new Date();
@@ -95,10 +95,10 @@ const Calendar = {
       day: now.getDate()
     };
 
-    // Get lunar info for current month header
+    // 获取当前月份头部的农历信息
     const lunar = Lunar.solarToLunar(this.currentYear, this.currentMonth, 15);
 
-    // Build header
+    // 构建头部
     const headerHtml = `
       <div class="calendar-header">
         <button class="calendar-nav calendar-prev" title="上个月">
@@ -118,7 +118,7 @@ const Calendar = {
       </div>
     `;
 
-    // Build weekday header (从周一开始)
+    // 构建星期头部（从周一开始）
     const weekdays = ['一', '二', '三', '四', '五', '六', '日'];
     const weekdayHtml = `
       <div class="calendar-weekdays">
@@ -126,31 +126,31 @@ const Calendar = {
       </div>
     `;
 
-    // Build days grid
+    // 构建日期网格
     const daysHtml = this.buildDaysGrid(today);
 
     this.container.querySelector('.calendar-content').innerHTML = headerHtml + weekdayHtml + daysHtml;
   },
 
   /**
-   * Build the days grid HTML
+   * 构建日期网格 HTML
    */
   buildDaysGrid(today) {
     const year = this.currentYear;
     const month = this.currentMonth;
 
-    // Get first day of month and days in month
+    // 获取本月第一天和月份天数
     const firstDay = new Date(year, month - 1, 1);
     // 将周日(0)转换为6，周一(1)转换为0，以此类推（周一开始）
     const startWeekday = (firstDay.getDay() + 6) % 7;
     const daysInMonth = new Date(year, month, 0).getDate();
 
-    // Get previous month info
+    // 获取上个月信息
     const prevMonthDays = new Date(year, month - 1, 0).getDate();
 
     let html = '<div class="calendar-days">';
 
-    // Previous month's trailing days
+    // 上个月末尾的日期
     for (let i = startWeekday - 1; i >= 0; i--) {
       const day = prevMonthDays - i;
       const prevMonth = month === 1 ? 12 : month - 1;
@@ -166,7 +166,7 @@ const Calendar = {
       `;
     }
 
-    // Current month's days
+    // 本月的日期
     for (let day = 1; day <= daysInMonth; day++) {
       const lunar = Lunar.solarToLunar(year, month, day);
       const lunarText = this.getLunarDisplayText(lunar, year, month, day);
@@ -188,7 +188,7 @@ const Calendar = {
       `;
     }
 
-    // Next month's leading days
+    // 下个月开头的日期
     const totalCells = Math.ceil((startWeekday + daysInMonth) / 7) * 7;
     const nextMonthDays = totalCells - startWeekday - daysInMonth;
 
@@ -211,8 +211,8 @@ const Calendar = {
   },
 
   /**
-   * Get the display text for lunar date
-   * Priority: Festival > Solar Term > Lunar Day (show month name on 初一)
+   * 获取农历日期的显示文本
+   * 优先级: 节日 > 节气 > 农历日（初一显示月份名）
    */
   getLunarDisplayText(lunar, year, month, day) {
     const solarTerm = Lunar.getSolarTerm(year, month, day);
@@ -226,7 +226,7 @@ const Calendar = {
       return solarTerm;
     }
 
-    // Show month name on first day of lunar month
+    // 农历月初一显示月份名
     if (lunar.day === 1) {
       return lunar.monthCn;
     }
@@ -235,5 +235,5 @@ const Calendar = {
   }
 };
 
-// Make available globally
+// 暴露到全局
 window.Calendar = Calendar;

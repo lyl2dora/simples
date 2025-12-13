@@ -1,23 +1,23 @@
 /**
- * Main entry point - initializes all modules
+ * 主入口 - 初始化所有模块
  */
 
 (async function() {
   'use strict';
 
   try {
-    // Phase 0: Apply visibility settings immediately (before rendering)
-    // This prevents "flash of hidden elements" issue
+    // 阶段0：立即应用可见性设置（渲染前）
+    // 这可以防止"隐藏元素闪烁"问题
     const settings = await Storage.getSettings();
     Storage.applyVisibility(settings);
 
-    // Phase 1: Immediate (no async, no network)
+    // 阶段1：即时初始化（无异步，无网络）
     Clock.init();
 
-    // Phase 2: Load positions (needed before rendering)
+    // 阶段2：加载位置（渲染前需要）
     await Drag.init();
 
-    // Phase 3: Parallel loading (independent modules with network requests)
+    // 阶段3：并行加载（带网络请求的独立模块）
     await Promise.all([
       Wallpaper.init(),
       Quote.init(),
@@ -27,11 +27,11 @@
       Calendar.init()
     ]);
 
-    // Phase 4: Settings (after all modules ready)
+    // 阶段4：设置（所有模块就绪后）
     await Settings.init();
 
-    console.log('New Tab initialized successfully');
+    console.log('新标签页初始化成功');
   } catch (error) {
-    console.error('Error initializing New Tab:', error);
+    console.error('新标签页初始化出错:', error);
   }
 })();
