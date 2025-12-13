@@ -119,7 +119,6 @@ body.edit-mode .draggable-element::before {
   padding: 10px 20px;
   background: rgba(0, 0, 0, 0.7);
   backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
   border-radius: 8px;
   font-size: 14px;
   color: rgba(255, 255, 255, 0.9);
@@ -216,7 +215,6 @@ body.edit-mode .guide-line.show {
   border-radius: 24px;
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
   color: #fff;
   outline: none;
   transition: background 0.3s ease, box-shadow 0.3s ease;
@@ -239,7 +237,6 @@ body.edit-mode .guide-line.show {
   margin-top: 8px;
   background: rgba(30, 30, 30, 0.95);
   backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
   border-radius: 12px;
   overflow: hidden;
   display: none;
@@ -309,7 +306,6 @@ body.edit-mode .guide-line.show {
 .calendar-content {
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
   border-radius: 16px;
   padding: 16px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
@@ -544,7 +540,6 @@ body.edit-mode .guide-line.show {
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -615,7 +610,6 @@ body.edit-mode .guide-line.show {
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
   color: #fff;
   cursor: pointer;
   display: flex;
@@ -660,7 +654,6 @@ body.auto-hide-controls .shortcut-item.add-shortcut:focus {
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
   color: rgba(255, 255, 255, 0.7);
   cursor: pointer;
   display: flex;
@@ -682,7 +675,6 @@ body.auto-hide-controls .shortcut-item.add-shortcut:focus {
   padding: 12px 16px;
   background: rgba(30, 30, 30, 0.95);
   backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
   border-radius: 8px;
   font-size: 13px;
   line-height: 1.5;
@@ -728,7 +720,6 @@ body.auto-hide-controls .shortcut-item.add-shortcut:focus {
   height: 100%;
   background: rgba(25, 25, 25, var(--panel-opacity, 0.75));
   backdrop-filter: blur(30px);
-  -webkit-backdrop-filter: blur(30px);
   transition: right 0.3s ease, background 0.3s ease;
   z-index: 1001;
   display: flex;
@@ -1011,7 +1002,6 @@ body.auto-hide-controls .shortcut-item.add-shortcut:focus {
   position: fixed;
   background: rgba(30, 30, 30, var(--panel-opacity, 0.75));
   backdrop-filter: blur(30px);
-  -webkit-backdrop-filter: blur(30px);
   border-radius: 8px;
   padding: 6px 0;
   min-width: 120px;
@@ -1063,7 +1053,6 @@ body.auto-hide-controls .shortcut-item.add-shortcut:focus {
   width: 360px;
   background: rgba(35, 35, 35, var(--panel-opacity, 0.75));
   backdrop-filter: blur(30px);
-  -webkit-backdrop-filter: blur(30px);
   border-radius: 16px;
   padding: 24px;
   opacity: 0;
@@ -1212,6 +1201,29 @@ body.auto-hide-controls .shortcut-item.add-shortcut:focus {
 
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.3);
+}
+
+/* Safari backdrop-filter fallback (Safari 9-15.3, iOS Safari 9-15.3) */
+@supports (-webkit-backdrop-filter: blur(1px)) and (not (backdrop-filter: blur(1px))) {
+  #edit-mode-hint,
+  #search-input,
+  #search-suggestions,
+  .calendar-content,
+  #settings-btn,
+  #wallpaper-info-btn,
+  #wallpaper-info-tooltip {
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  .shortcut-icon {
+    -webkit-backdrop-filter: blur(5px);
+  }
+
+  #settings-sidebar,
+  .context-menu,
+  #shortcut-dialog {
+    -webkit-backdrop-filter: blur(30px);
+  }
 }
 
 /* Responsive adjustments */
