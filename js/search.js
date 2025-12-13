@@ -1,5 +1,5 @@
 /**
- * Search module - handles search with Chrome Search API and Google suggestions
+ * 搜索模块 - 使用 Chrome 搜索 API 和 Google 建议处理搜索
  */
 
 const Search = {
@@ -11,7 +11,7 @@ const Search = {
   settings: null,
 
   /**
-   * Initialize search
+   * 初始化搜索
    */
   async init() {
     this.inputElement = document.getElementById('search-input');
@@ -22,34 +22,34 @@ const Search = {
   },
 
   /**
-   * Bind event listeners
+   * 绑定事件监听器
    */
   bindEvents() {
-    // Input event with debounce
+    // 带防抖的输入事件
     this.inputElement.addEventListener('input', (e) => {
       this.onInput(e.target.value);
     });
 
-    // Keyboard navigation
+    // 键盘导航
     this.inputElement.addEventListener('keydown', (e) => {
       this.onKeyDown(e);
     });
 
-    // Focus/blur events
+    // 聚焦/失焦事件
     this.inputElement.addEventListener('focus', () => {
       if (this.suggestions.length > 0) {
         this.showSuggestions();
       }
     });
 
-    // Click outside to close suggestions
+    // 点击外部关闭建议
     document.addEventListener('click', (e) => {
       if (!this.inputElement.contains(e.target) && !this.suggestionsElement.contains(e.target)) {
         this.hideSuggestions();
       }
     });
 
-    // Event delegation for suggestions
+    // 建议的事件委托
     this.suggestionsElement.addEventListener('click', (e) => {
       const item = e.target.closest('.suggestion-item');
       if (item) {
@@ -69,10 +69,10 @@ const Search = {
   },
 
   /**
-   * Handle input
+   * 处理输入
    */
   onInput(value) {
-    // Clear previous timer
+    // 清除之前的计时器
     if (this.debounceTimer) {
       clearTimeout(this.debounceTimer);
     }
@@ -82,7 +82,7 @@ const Search = {
       return;
     }
 
-    // Debounce suggestions request (300ms)
+    // 防抖建议请求（300毫秒）
     this.debounceTimer = setTimeout(async () => {
       if (this.settings.searchSuggestions) {
         await this.fetchSuggestions(value);
@@ -91,7 +91,7 @@ const Search = {
   },
 
   /**
-   * Handle keyboard navigation
+   * 处理键盘导航
    */
   onKeyDown(e) {
     switch (e.key) {
@@ -118,7 +118,7 @@ const Search = {
   },
 
   /**
-   * Fetch suggestions from Google
+   * 从 Google 获取搜索建议
    */
   async fetchSuggestions(query) {
     try {
@@ -128,20 +128,20 @@ const Search = {
       const data = await response.json();
 
       if (data && data[1] && Array.isArray(data[1])) {
-        this.suggestions = data[1].slice(0, 8); // Limit to 8 suggestions
+        this.suggestions = data[1].slice(0, 8); // 限制为8个建议
         this.selectedIndex = -1;
         this.renderSuggestions();
         this.showSuggestions();
       }
     } catch (error) {
-      console.error('Error fetching suggestions:', error);
+      console.error('获取搜索建议出错:', error);
       this.suggestions = [];
       this.hideSuggestions();
     }
   },
 
   /**
-   * Render suggestions list
+   * 渲染建议列表
    */
   renderSuggestions() {
     if (this.suggestions.length === 0) {
@@ -160,7 +160,7 @@ const Search = {
   },
 
   /**
-   * Show suggestions dropdown
+   * 显示建议下拉框
    */
   showSuggestions() {
     if (this.suggestions.length > 0) {
@@ -169,7 +169,7 @@ const Search = {
   },
 
   /**
-   * Hide suggestions dropdown
+   * 隐藏建议下拉框
    */
   hideSuggestions() {
     this.suggestionsElement.classList.remove('show');
@@ -177,7 +177,7 @@ const Search = {
   },
 
   /**
-   * Select next suggestion
+   * 选择下一个建议
    */
   selectNext() {
     if (this.suggestions.length === 0) return;
@@ -188,7 +188,7 @@ const Search = {
   },
 
   /**
-   * Select previous suggestion
+   * 选择上一个建议
    */
   selectPrevious() {
     if (this.suggestions.length === 0) return;
@@ -201,7 +201,7 @@ const Search = {
   },
 
   /**
-   * Update selection highlight
+   * 更新选中高亮
    */
   updateSelection() {
     const items = this.suggestionsElement.querySelectorAll('.suggestion-item');
@@ -211,7 +211,7 @@ const Search = {
   },
 
   /**
-   * Execute search using Chrome Search API
+   * 使用 Chrome 搜索 API 执行搜索
    */
   executeSearch() {
     const query = this.inputElement.value.trim();
@@ -219,7 +219,7 @@ const Search = {
 
     this.hideSuggestions();
 
-    // Use Chrome Search API
+    // 使用 Chrome 搜索 API
     const disposition = this.settings.searchTarget === 'new' ? 'NEW_TAB' : 'CURRENT_TAB';
 
     chrome.search.query({
@@ -229,7 +229,7 @@ const Search = {
   },
 
   /**
-   * Escape HTML special characters
+   * 转义 HTML 特殊字符
    */
   escapeHtml(text) {
     const div = document.createElement('div');
@@ -238,12 +238,12 @@ const Search = {
   },
 
   /**
-   * Update settings
+   * 更新设置
    */
   async updateSettings() {
     this.settings = await Storage.getSettings();
   }
 };
 
-// Make available globally
+// 暴露到全局
 window.Search = Search;

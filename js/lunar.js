@@ -1,14 +1,14 @@
 /**
- * Lunar calendar module - Chinese lunar calendar calculations
- * Lightweight implementation based on lookup table method (1900-2100)
+ * 农历模块 - 中国农历计算
+ * 基于查找表方法的轻量级实现（1900-2100）
  */
 
 const Lunar = {
-  // Lunar data from 1900 to 2100
-  // Each year's data is encoded in a 4-byte integer:
-  // - Bits 0-11: Days in each month (1=30 days, 0=29 days)
-  // - Bits 12-15: Leap month (0=no leap month, 1-12=leap month number)
-  // - Bit 16: Days in leap month (1=30 days, 0=29 days)
+  // 1900-2100年的农历数据
+  // 每年的数据编码在一个4字节整数中：
+  // - 第0-11位：每月天数（1=30天，0=29天）
+  // - 第12-15位：闰月（0=无闰月，1-12=闰月月份）
+  // - 第16位：闰月天数（1=30天，0=29天）
   lunarInfo: [
     0x04bd8, 0x04ae0, 0x0a570, 0x054d5, 0x0d260, 0x0d950, 0x16554, 0x056a0, 0x09ad0, 0x055d2,
     0x04ae0, 0x0a5b6, 0x0a4d0, 0x0d250, 0x1d255, 0x0b540, 0x0d6a0, 0x0ada2, 0x095b0, 0x14977,
@@ -33,7 +33,7 @@ const Lunar = {
     0x0d520
   ],
 
-  // Chinese characters
+  // 中文字符
   tianGan: ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'],
   diZhi: ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'],
   animals: ['鼠', '牛', '虎', '兔', '龙', '蛇', '马', '羊', '猴', '鸡', '狗', '猪'],
@@ -42,7 +42,7 @@ const Lunar = {
              '十一', '十二', '十三', '十四', '十五', '十六', '十七', '十八', '十九', '二十',
              '廿一', '廿二', '廿三', '廿四', '廿五', '廿六', '廿七', '廿八', '廿九', '三十'],
 
-  // Solar terms (24 节气)
+  // 二十四节气
   solarTerms: [
     '小寒', '大寒', '立春', '雨水', '惊蛰', '春分',
     '清明', '谷雨', '立夏', '小满', '芒种', '夏至',
@@ -50,7 +50,7 @@ const Lunar = {
     '寒露', '霜降', '立冬', '小雪', '大雪', '冬至'
   ],
 
-  // Solar term data (from 1900)
+  // 节气数据（从1900年开始）
   solarTermInfo: [
     0, 21208, 42467, 63836, 85337, 107014, 128867, 150921, 173149, 195551,
     218072, 240693, 263343, 285989, 308563, 331033, 353350, 375494, 397447,
@@ -58,14 +58,14 @@ const Lunar = {
   ],
 
   /**
-   * Get leap month for a year (0 if no leap month)
+   * 获取某年的闰月（无闰月返回0）
    */
   leapMonth(year) {
     return this.lunarInfo[year - 1900] & 0xf;
   },
 
   /**
-   * Get days in leap month (0 if no leap month)
+   * 获取闰月天数（无闰月返回0）
    */
   leapDays(year) {
     if (this.leapMonth(year)) {
@@ -75,7 +75,7 @@ const Lunar = {
   },
 
   /**
-   * Get total days in a lunar year
+   * 获取农历年总天数
    */
   yearDays(year) {
     let sum = 348;
@@ -86,27 +86,27 @@ const Lunar = {
   },
 
   /**
-   * Get days in a lunar month
+   * 获取农历月天数
    */
   monthDays(year, month) {
     return (this.lunarInfo[year - 1900] & (0x10000 >> month)) ? 30 : 29;
   },
 
   /**
-   * Convert solar date to lunar date
+   * 公历转农历
    */
   solarToLunar(year, month, day) {
-    // Validate input
+    // 验证输入
     if (year < 1900 || year > 2100) {
       return null;
     }
 
-    // Base date: 1900-01-31 is lunar 1900-01-01
+    // 基准日期：1900-01-31 是农历 1900-01-01
     const baseDate = new Date(1900, 0, 31);
     const objDate = new Date(year, month - 1, day);
     let offset = Math.floor((objDate - baseDate) / 86400000);
 
-    // Calculate lunar year
+    // 计算农历年
     let lunarYear = 1900;
     let daysInYear = 0;
     for (lunarYear = 1900; lunarYear < 2101 && offset > 0; lunarYear++) {
@@ -118,14 +118,14 @@ const Lunar = {
       lunarYear--;
     }
 
-    // Calculate lunar month
+    // 计算农历月
     const leap = this.leapMonth(lunarYear);
     let isLeap = false;
     let lunarMonth = 1;
     let daysInMonth = 0;
 
     for (lunarMonth = 1; lunarMonth < 13 && offset > 0; lunarMonth++) {
-      // Leap month
+      // 闰月
       if (leap > 0 && lunarMonth === (leap + 1) && !isLeap) {
         --lunarMonth;
         isLeap = true;
@@ -146,7 +146,7 @@ const Lunar = {
       --lunarMonth;
     }
 
-    // If landed on leap month
+    // 如果落在闰月
     if (leap > 0 && lunarMonth === leap + 1) {
       if (isLeap) {
         isLeap = false;
@@ -171,7 +171,7 @@ const Lunar = {
   },
 
   /**
-   * Get Chinese year name
+   * 获取农历年的中文名称
    */
   getYearCn(year) {
     const chars = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九'];
@@ -179,28 +179,28 @@ const Lunar = {
   },
 
   /**
-   * Get Chinese month name
+   * 获取农历月的中文名称
    */
   getMonthCn(month, isLeap) {
     return (isLeap ? '闰' : '') + this.monthNames[month - 1] + '月';
   },
 
   /**
-   * Get Chinese day name
+   * 获取农历日的中文名称
    */
   getDayCn(day) {
     return this.dayNames[day - 1];
   },
 
   /**
-   * Get zodiac animal
+   * 获取生肖
    */
   getAnimal(year) {
     return this.animals[(year - 4) % 12];
   },
 
   /**
-   * Get Gan-Zhi (干支) for year
+   * 获取干支年
    */
   getGanZhi(year) {
     const gan = this.tianGan[(year - 4) % 10];
@@ -209,7 +209,7 @@ const Lunar = {
   },
 
   /**
-   * Get solar term for a date (if any)
+   * 获取某日的节气（如果有）
    */
   getSolarTerm(year, month, day) {
     const terms = this.getSolarTermsForMonth(year, month);
@@ -222,7 +222,7 @@ const Lunar = {
   },
 
   /**
-   * Get solar terms for a month
+   * 获取某月的节气
    */
   getSolarTermsForMonth(year, month) {
     const terms = [];
@@ -239,7 +239,7 @@ const Lunar = {
   },
 
   /**
-   * Calculate solar term day
+   * 计算节气日期
    */
   getSolarTermDay(year, termIndex) {
     const baseDate = new Date(1900, 0, 6, 2, 5, 0);
@@ -249,10 +249,10 @@ const Lunar = {
   },
 
   /**
-   * Get traditional Chinese festivals
+   * 获取中国传统节日
    */
   getFestival(month, day, lunarMonth, lunarDay, solarTerm) {
-    // Solar calendar festivals
+    // 公历节日
     const solarFestivals = {
       '1-1': '元旦',
       '2-14': '情人节',
@@ -265,7 +265,7 @@ const Lunar = {
       '12-25': '圣诞节'
     };
 
-    // Lunar calendar festivals
+    // 农历节日
     const lunarFestivals = {
       '1-1': '春节',
       '1-15': '元宵节',
@@ -276,21 +276,21 @@ const Lunar = {
       '9-9': '重阳节',
       '12-8': '腊八节',
       '12-30': '除夕',
-      '12-29': '除夕' // For years with 29 days in 12th month
+      '12-29': '除夕' // 腊月29天的年份
     };
 
-    // Check solar term based festivals
+    // 检查基于节气的节日
     if (solarTerm === '清明') {
       return '清明节';
     }
 
-    // Check solar festivals
+    // 检查公历节日
     const solarKey = `${month}-${day}`;
     if (solarFestivals[solarKey]) {
       return solarFestivals[solarKey];
     }
 
-    // Check lunar festivals
+    // 检查农历节日
     const lunarKey = `${lunarMonth}-${lunarDay}`;
     if (lunarFestivals[lunarKey]) {
       return lunarFestivals[lunarKey];
@@ -300,5 +300,5 @@ const Lunar = {
   }
 };
 
-// Make available globally
+// 暴露到全局
 window.Lunar = Lunar;

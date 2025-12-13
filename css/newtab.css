@@ -1,4 +1,4 @@
-/* Reset and base styles */
+/* 重置和基础样式 */
 * {
   margin: 0;
   padding: 0;
@@ -14,7 +14,7 @@ body {
   user-select: none;
 }
 
-/* Wallpaper layers */
+/* 壁纸图层 */
 #wallpaper-container {
   position: fixed;
   top: 0;
@@ -59,7 +59,7 @@ body {
   pointer-events: none;
 }
 
-/* Grain texture overlay - Simple noise SVG method */
+/* 颗粒纹理叠加层 - 简单噪点 SVG 方法 */
 #grain-overlay {
   position: absolute;
   top: 0;
@@ -74,14 +74,14 @@ body {
   mix-blend-mode: overlay;
 }
 
-/* Main container */
+/* 主容器 */
 #main-container {
   position: relative;
   width: 100%;
   height: 100%;
 }
 
-/* Draggable elements base styles */
+/* 可拖拽元素基础样式 */
 .draggable-element {
   position: absolute;
   transition: transform 0.1s ease;
@@ -93,7 +93,7 @@ body {
   z-index: 1000;
 }
 
-/* Edit mode styles */
+/* 编辑模式样式 */
 body.edit-mode .draggable-element {
   cursor: grab;
 }
@@ -110,7 +110,7 @@ body.edit-mode .draggable-element::before {
   pointer-events: none;
 }
 
-/* Edit mode hint */
+/* 编辑模式提示 */
 #edit-mode-hint {
   position: fixed;
   top: 20px;
@@ -133,12 +133,12 @@ body.edit-mode #edit-mode-hint {
   visibility: visible;
 }
 
-/* Disable pointer events on inputs in edit mode */
+/* 编辑模式下禁用输入框指针事件 */
 body.edit-mode #search-input {
   pointer-events: none;
 }
 
-/* Guide lines for centering */
+/* 居中辅助线 */
 .guide-line {
   position: fixed;
   background: rgba(255, 255, 255, 0.5);
@@ -165,7 +165,7 @@ body.edit-mode .guide-line.show {
   display: block;
 }
 
-/* Clock styles */
+/* 时钟样式 */
 #clock-container {
   text-align: center;
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
@@ -185,19 +185,19 @@ body.edit-mode .guide-line.show {
   margin-top: 0.5rem;
 }
 
-/* Search box styles */
+/* 搜索框样式 */
 #search-container {
   width: 100%;
   max-width: 600px;
-  /* Horizontal centering via left/right auto margin - no translateX to avoid cursor issues */
+  /* 通过 left/right auto margin 水平居中 - 不使用 translateX 以避免光标问题 */
   margin-left: auto;
   margin-right: auto;
-  /* Only use translateY for vertical centering */
+  /* 仅使用 translateY 垂直居中 */
   transform: translateY(-50%);
   z-index: 10;
 }
 
-/* Elevate z-index when search suggestions are visible */
+/* 搜索建议可见时提升 z-index */
 #search-container:focus-within {
   z-index: 100;
 }
@@ -266,7 +266,7 @@ body.edit-mode .guide-line.show {
   flex-shrink: 0;
 }
 
-/* Quote styles */
+/* 一言样式 */
 #quote-container {
   text-align: center;
   max-width: 800px;
@@ -298,7 +298,7 @@ body.edit-mode .guide-line.show {
   content: '—— ';
 }
 
-/* Calendar styles */
+/* 日历样式 */
 #calendar-container {
   width: 280px;
 }
@@ -449,7 +449,7 @@ body.edit-mode .guide-line.show {
   vertical-align: middle;
 }
 
-/* Crypto ticker styles */
+/* 加密货币行情样式 */
 #crypto-container {
   text-align: center;
 }
@@ -500,7 +500,7 @@ body.edit-mode .guide-line.show {
   background: rgba(248, 113, 113, 0.15);
 }
 
-/* Shortcuts styles */
+/* 快捷链接样式 */
 #shortcuts-container {
   width: 100%;
   max-width: 700px;
@@ -588,7 +588,7 @@ body.edit-mode .guide-line.show {
   border-color: rgba(255, 255, 255, 0.5);
 }
 
-/* Settings button zone - hover detection area */
+/* 设置按钮区域 - 悬停检测区域 */
 #settings-zone {
   position: fixed;
   bottom: 0;
@@ -602,7 +602,7 @@ body.edit-mode .guide-line.show {
   z-index: 100;
 }
 
-/* Settings button */
+/* 设置按钮 */
 #settings-btn {
   width: 44px;
   height: 44px;
@@ -623,7 +623,7 @@ body.edit-mode .guide-line.show {
   transform: scale(1.1);
 }
 
-/* Auto-hide controls mode */
+/* 自动隐藏控件模式 */
 body.auto-hide-controls #settings-btn {
   opacity: 0;
 }
@@ -643,7 +643,7 @@ body.auto-hide-controls .shortcut-item.add-shortcut:focus {
   opacity: 1;
 }
 
-/* Wallpaper info button */
+/* 壁纸信息按钮 */
 #wallpaper-info-btn {
   position: fixed;
   bottom: 20px;
@@ -693,7 +693,7 @@ body.auto-hide-controls .shortcut-item.add-shortcut:focus {
   transform: translateY(0);
 }
 
-/* Settings sidebar */
+/* 设置侧边栏 */
 #settings-overlay {
   position: fixed;
   top: 0;
@@ -826,7 +826,7 @@ body.auto-hide-controls .shortcut-item.add-shortcut:focus {
   color: #fff;
 }
 
-/* Pexels settings */
+/* Pexels 设置 */
 .input-with-link {
   display: flex;
   gap: 10px;
@@ -865,7 +865,7 @@ body.auto-hide-controls .shortcut-item.add-shortcut:focus {
   margin-left: 4px;
 }
 
-/* Range slider */
+/* 范围滑块 */
 .setting-item input[type="range"] {
   width: calc(100% - 50px);
   margin-right: 10px;
@@ -877,7 +877,7 @@ body.auto-hide-controls .shortcut-item.add-shortcut:focus {
   color: rgba(255, 255, 255, 0.7);
 }
 
-/* Toggle switch */
+/* 切换开关 */
 .toggle-label {
   display: flex;
   align-items: center;
@@ -923,7 +923,7 @@ body.auto-hide-controls .shortcut-item.add-shortcut:focus {
   transform: translateX(20px);
 }
 
-/* Checkbox group */
+/* 复选框组 */
 .checkbox-group {
   display: flex;
   flex-direction: column;
@@ -945,7 +945,7 @@ body.auto-hide-controls .shortcut-item.add-shortcut:focus {
   accent-color: #4CAF50;
 }
 
-/* Settings buttons */
+/* 设置按钮 */
 .settings-btn {
   padding: 10px 16px;
   font-size: 14px;
@@ -971,7 +971,7 @@ body.auto-hide-controls .shortcut-item.add-shortcut:focus {
   flex: 1;
 }
 
-/* Local wallpaper preview */
+/* 本地壁纸预览 */
 #local-wallpaper-preview {
   display: flex;
   flex-wrap: wrap;
@@ -997,7 +997,7 @@ body.auto-hide-controls .shortcut-item.add-shortcut:focus {
   border-color: #4CAF50;
 }
 
-/* Context menu */
+/* 上下文菜单 */
 .context-menu {
   position: fixed;
   background: rgba(30, 30, 30, var(--panel-opacity, 0.75));
@@ -1026,7 +1026,7 @@ body.auto-hide-controls .shortcut-item.add-shortcut:focus {
   background: rgba(255, 255, 255, 0.1);
 }
 
-/* Shortcut dialog */
+/* 快捷链接对话框 */
 #shortcut-dialog-overlay {
   position: fixed;
   top: 0;
@@ -1180,12 +1180,12 @@ body.auto-hide-controls .shortcut-item.add-shortcut:focus {
   background: #45a049;
 }
 
-/* Hidden elements */
+/* 隐藏元素 */
 .hidden {
   display: none !important;
 }
 
-/* Scrollbar styles */
+/* 滚动条样式 */
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -1203,7 +1203,7 @@ body.auto-hide-controls .shortcut-item.add-shortcut:focus {
   background: rgba(255, 255, 255, 0.3);
 }
 
-/* Safari backdrop-filter fallback (Safari 9-15.3, iOS Safari 9-15.3) */
+/* Safari backdrop-filter 兼容 (Safari 9-15.3, iOS Safari 9-15.3) */
 @supports (-webkit-backdrop-filter: blur(1px)) and (not (backdrop-filter: blur(1px))) {
   #edit-mode-hint,
   #search-input,
@@ -1226,7 +1226,7 @@ body.auto-hide-controls .shortcut-item.add-shortcut:focus {
   }
 }
 
-/* Responsive adjustments */
+/* 响应式调整 */
 @media (max-width: 768px) {
   #time {
     font-size: 4rem;

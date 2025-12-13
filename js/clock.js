@@ -1,5 +1,5 @@
 /**
- * Clock module - handles time and date display
+ * 时钟模块 - 处理时间和日期显示
  */
 
 const Clock = {
@@ -8,32 +8,32 @@ const Clock = {
   intervalId: null,
 
   /**
-   * Initialize clock
+   * 初始化时钟
    */
   init() {
     this.timeElement = document.getElementById('time');
     this.dateElement = document.getElementById('date');
 
-    // Update immediately
+    // 立即更新
     this.update();
 
-    // Update every second
+    // 每秒更新
     this.intervalId = setInterval(() => this.update(), 1000);
   },
 
   /**
-   * Update time and date display
+   * 更新时间和日期显示
    */
   update() {
     const now = new Date();
 
-    // Format time with seconds (HH:MM:SS)
+    // 格式化时间，带秒 (HH:MM:SS)
     const hours = String(now.getHours()).padStart(2, '0');
     const minutes = String(now.getMinutes()).padStart(2, '0');
     const seconds = String(now.getSeconds()).padStart(2, '0');
     this.timeElement.textContent = `${hours}:${minutes}:${seconds}`;
 
-    // Format date
+    // 格式化日期
     const year = now.getFullYear();
     const month = now.getMonth() + 1;
     const date = now.getDate();
@@ -43,7 +43,7 @@ const Clock = {
   },
 
   /**
-   * Get weekday name in Chinese
+   * 获取中文星期名称
    */
   getWeekDay(day) {
     const weekDays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
@@ -51,5 +51,5 @@ const Clock = {
   }
 };
 
-// Make available globally
+// 暴露到全局
 window.Clock = Clock;

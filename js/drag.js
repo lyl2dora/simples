@@ -1,5 +1,5 @@
 /**
- * Drag module - handles element dragging and positioning
+ * 拖拽模块 - 处理元素拖拽和定位
  */
 
 const Drag = {
@@ -11,33 +11,33 @@ const Drag = {
   startY: 0,
   elementStartX: 0,
   elementStartY: 0,
-  gridSize: 5, // Snap to 5% grid
+  gridSize: 5, // 对齐到 5% 网格
   guideLines: null,
 
   /**
-   * Initialize drag functionality
+   * 初始化拖拽功能
    */
   async init() {
-    // Get saved positions
+    // 获取保存的位置
     const settings = await Storage.getSettings();
     this.positions = settings.positions || Storage.defaults.positions;
 
-    // Initialize draggable elements
+    // 初始化可拖拽元素
     document.querySelectorAll('.draggable-element').forEach(el => {
       const id = el.dataset.elementId;
       this.elements[id] = el;
       this.setPosition(id, this.positions[id] || Storage.defaults.positions[id]);
     });
 
-    // Create guide lines
+    // 创建辅助线
     this.createGuideLines();
 
-    // Bind events
+    // 绑定事件
     this.bindEvents();
   },
 
   /**
-   * Create guide lines for centering assistance
+   * 创建居中辅助线
    */
   createGuideLines() {
     const container = document.getElementById('main-container');
@@ -57,38 +57,38 @@ const Drag = {
   },
 
   /**
-   * Set element position (in percentage)
+   * 设置元素位置（百分比）
    */
   setPosition(id, pos) {
     const el = this.elements[id];
     if (!el || !pos) return;
 
-    // Store position
+    // 存储位置
     this.positions[id] = pos;
 
-    // For search container, avoid translateX to prevent cursor positioning issues
-    // Use left/right values for horizontal positioning instead
+    // 对于搜索容器，避免使用 translateX 以防止光标定位问题
+    // 改用 left/right 值进行水平定位
     if (id === 'search') {
       el.style.top = `${pos.y}%`;
       el.style.transform = 'translateY(-50%)';
-      // Calculate horizontal position using left and right
-      // When pos.x = 50, center the element (left: 0, right: 0, margin: auto)
-      // When pos.x < 50, shift left; when pos.x > 50, shift right
-      const offset = (pos.x - 50) * 2; // Convert center position to offset percentage
+      // 使用 left 和 right 计算水平位置
+      // 当 pos.x = 50 时，居中元素（left: 0, right: 0, margin: auto）
+      // 当 pos.x < 50 时，向左偏移；当 pos.x > 50 时，向右偏移
+      const offset = (pos.x - 50) * 2; // 将中心位置转换为偏移百分比
       if (offset === 0) {
         el.style.left = '0';
         el.style.right = '0';
       } else if (offset < 0) {
-        // Shift towards left
+        // 向左偏移
         el.style.left = '0';
         el.style.right = `${-offset}%`;
       } else {
-        // Shift towards right
+        // 向右偏移
         el.style.left = `${offset}%`;
         el.style.right = '0';
       }
     } else {
-      // Apply position (center the element at the percentage point)
+      // 应用位置（将元素中心对齐到百分比点）
       el.style.left = `${pos.x}%`;
       el.style.top = `${pos.y}%`;
       el.style.transform = 'translate(-50%, -50%)';
@@ -96,10 +96,10 @@ const Drag = {
   },
 
   /**
-   * Bind event listeners
+   * 绑定事件监听器
    */
   bindEvents() {
-    // Mouse events for dragging
+    // 拖拽的鼠标事件
     document.querySelectorAll('.draggable-element').forEach(el => {
       el.addEventListener('mousedown', (e) => this.onMouseDown(e, el));
     });
@@ -107,7 +107,7 @@ const Drag = {
     document.addEventListener('mousemove', (e) => this.onMouseMove(e));
     document.addEventListener('mouseup', () => this.onMouseUp());
 
-    // Touch events for mobile
+    // 移动端触摸事件
     document.querySelectorAll('.draggable-element').forEach(el => {
       el.addEventListener('touchstart', (e) => this.onTouchStart(e, el), { passive: false });
     });
@@ -115,22 +115,22 @@ const Drag = {
     document.addEventListener('touchmove', (e) => this.onTouchMove(e), { passive: false });
     document.addEventListener('touchend', () => this.onMouseUp());
 
-    // Right-click to exit edit mode
+    // 右键点击退出编辑模式
     document.addEventListener('contextmenu', (e) => this.onContextMenu(e));
   },
 
   /**
-   * Context menu handler - right-click to exit edit mode
+   * 右键菜单处理 - 右键点击退出编辑模式
    */
   onContextMenu(e) {
     if (!document.body.classList.contains('edit-mode')) return;
 
-    // Check if clicking on main container or draggable elements (not on shortcuts context menu area)
+    // 检查是否点击在主容器或可拖拽元素上（不是在快捷链接右键菜单区域）
     const isInMainArea = e.target.closest('#main-container') ||
                          e.target.closest('.draggable-element') ||
                          e.target === document.body;
 
-    // Don't interfere with shortcut context menu
+    // 不干扰快捷链接的右键菜单
     const isShortcutItem = e.target.closest('.shortcut-item');
     if (isShortcutItem) return;
 
@@ -141,13 +141,13 @@ const Drag = {
   },
 
   /**
-   * Exit edit mode and update UI
+   * 退出编辑模式并更新 UI
    */
   async exitEditMode() {
     this.disableEditMode();
     await Storage.saveSetting('editMode', false);
 
-    // Update settings checkbox if visible
+    // 如果可见，更新设置复选框
     const editModeCheckbox = document.getElementById('setting-edit-mode');
     if (editModeCheckbox) {
       editModeCheckbox.checked = false;
@@ -155,21 +155,21 @@ const Drag = {
   },
 
   /**
-   * Mouse down handler
+   * 鼠标按下处理
    */
   onMouseDown(e, el) {
-    // Only drag in edit mode
+    // 只在编辑模式下拖拽
     if (!document.body.classList.contains('edit-mode')) return;
 
-    // In edit mode, allow dragging even on input/button elements
-    // The element itself will be dragged, not interacted with
+    // 在编辑模式下，即使在 input/button 元素上也允许拖拽
+    // 元素本身将被拖拽，而不是交互
     e.preventDefault();
     e.stopPropagation();
     this.startDrag(e.clientX, e.clientY, el);
   },
 
   /**
-   * Touch start handler
+   * 触摸开始处理
    */
   onTouchStart(e, el) {
     if (!document.body.classList.contains('edit-mode')) return;
@@ -180,7 +180,7 @@ const Drag = {
   },
 
   /**
-   * Start dragging
+   * 开始拖拽
    */
   startDrag(clientX, clientY, el) {
     this.isDragging = true;
@@ -196,7 +196,7 @@ const Drag = {
   },
 
   /**
-   * Mouse move handler
+   * 鼠标移动处理
    */
   onMouseMove(e) {
     if (!this.isDragging) return;
@@ -204,7 +204,7 @@ const Drag = {
   },
 
   /**
-   * Touch move handler
+   * 触摸移动处理
    */
   onTouchMove(e) {
     if (!this.isDragging) return;
@@ -214,46 +214,46 @@ const Drag = {
   },
 
   /**
-   * Update element position during drag
+   * 拖拽时更新元素位置
    */
   updatePosition(clientX, clientY) {
     const deltaX = clientX - this.startX;
     const deltaY = clientY - this.startY;
 
-    // Convert pixel delta to percentage
+    // 将像素差转换为百分比
     const percentX = (deltaX / window.innerWidth) * 100;
     const percentY = (deltaY / window.innerHeight) * 100;
 
     let newX = this.elementStartX + percentX;
     let newY = this.elementStartY + percentY;
 
-    // Constrain to viewport (with padding)
+    // 限制在视口内（带边距）
     const padding = 5;
     newX = Math.max(padding, Math.min(100 - padding, newX));
     newY = Math.max(padding, Math.min(100 - padding, newY));
 
-    // Snap to grid
+    // 对齐到网格
     newX = Math.round(newX / this.gridSize) * this.gridSize;
     newY = Math.round(newY / this.gridSize) * this.gridSize;
 
-    // Show guide lines when near center
+    // 接近中心时显示辅助线
     this.updateGuideLines(newX, newY);
 
-    // Apply position
+    // 应用位置
     const id = this.currentElement.dataset.elementId;
     this.setPosition(id, { x: newX, y: newY });
   },
 
   /**
-   * Update guide lines visibility
+   * 更新辅助线可见性
    */
   updateGuideLines(x, y) {
-    const threshold = 2; // Show when within 2% of center
+    const threshold = 2; // 距中心 2% 以内时显示
 
-    // Vertical center line
+    // 垂直中心线
     if (Math.abs(x - 50) < threshold) {
       this.guideLines.vertical.classList.add('show');
-      // Snap to center
+      // 吸附到中心
       const id = this.currentElement.dataset.elementId;
       this.positions[id].x = 50;
       this.currentElement.style.left = '50%';
@@ -261,7 +261,7 @@ const Drag = {
       this.guideLines.vertical.classList.remove('show');
     }
 
-    // Horizontal center line
+    // 水平中心线
     if (Math.abs(y - 50) < threshold) {
       this.guideLines.horizontal.classList.add('show');
       const id = this.currentElement.dataset.elementId;
@@ -273,7 +273,7 @@ const Drag = {
   },
 
   /**
-   * Mouse up handler
+   * 鼠标释放处理
    */
   async onMouseUp() {
     if (!this.isDragging) return;
@@ -281,25 +281,25 @@ const Drag = {
     this.isDragging = false;
     this.currentElement.classList.remove('dragging');
 
-    // Hide guide lines
+    // 隐藏辅助线
     this.guideLines.vertical.classList.remove('show');
     this.guideLines.horizontal.classList.remove('show');
 
-    // Save positions
+    // 保存位置
     await this.savePositions();
 
     this.currentElement = null;
   },
 
   /**
-   * Save all positions to storage
+   * 保存所有位置到存储
    */
   async savePositions() {
     await Storage.saveSetting('positions', this.positions);
   },
 
   /**
-   * Reset positions to defaults
+   * 重置位置为默认值
    */
   async resetPositions() {
     this.positions = { ...Storage.defaults.positions };
@@ -312,21 +312,21 @@ const Drag = {
   },
 
   /**
-   * Enable edit mode
+   * 启用编辑模式
    */
   enableEditMode() {
     document.body.classList.add('edit-mode');
   },
 
   /**
-   * Disable edit mode
+   * 禁用编辑模式
    */
   disableEditMode() {
     document.body.classList.remove('edit-mode');
   },
 
   /**
-   * Toggle edit mode
+   * 切换编辑模式
    */
   async toggleEditMode(enabled) {
     if (enabled) {
@@ -338,5 +338,5 @@ const Drag = {
   }
 };
 
-// Make available globally
+// 暴露到全局
 window.Drag = Drag;

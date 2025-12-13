@@ -1,5 +1,5 @@
 /**
- * Wallpaper module - handles Bing wallpapers and local wallpapers
+ * 壁纸模块 - 处理 Bing 壁纸和本地壁纸
  */
 
 const Wallpaper = {
@@ -7,18 +7,18 @@ const Wallpaper = {
   wallpaperInfo: null,
 
   /**
-   * Initialize wallpaper
+   * 初始化壁纸
    */
   async init() {
     const settings = await Storage.getSettings();
 
-    // Set overlay opacity
+    // 设置叠加层透明度
     this.setOverlayOpacity(settings.overlayOpacity);
 
-    // Try to show last wallpaper immediately (for instant display)
+    // 尝试立即显示上次的壁纸（用于即时显示）
     await this.showLastWallpaperInstantly();
 
-    // Load wallpaper based on source
+    // 根据壁纸源加载壁纸
     await this.loadWallpaperBySource(settings);
   },
 
@@ -39,24 +39,24 @@ const Wallpaper = {
   },
 
   /**
-   * Show last wallpaper instantly (no transition, for immediate display on load)
+   * 立即显示上次的壁纸（无过渡效果，用于加载时即时显示）
    */
   async showLastWallpaperInstantly() {
     const { url, avgColor } = await Storage.getLastWallpaper();
     const currentEl = document.getElementById('wallpaper-current');
 
     if (url) {
-      // Show last wallpaper URL (browser HTTP cache should make this instant)
+      // 显示上次的壁纸 URL（浏览器 HTTP 缓存应该使其即时显示）
       currentEl.style.backgroundImage = `url(${url})`;
     } else if (avgColor) {
-      // Fallback to average color if no URL cached
+      // 如果没有缓存的 URL，则使用平均颜色作为备选
       currentEl.style.backgroundColor = avgColor;
     }
-    // If neither exists, keep default (will be set by loadXxxWallpaper)
+    // 如果都不存在，保持默认状态（将由 loadXxxWallpaper 设置）
   },
 
   /**
-   * Set overlay opacity
+   * 设置叠加层透明度
    */
   setOverlayOpacity(opacity) {
     const overlay = document.getElementById('wallpaper-overlay');
@@ -70,7 +70,7 @@ const Wallpaper = {
   },
 
   /**
-   * Get wallpaper index based on mode
+   * 根据模式获取壁纸索引
    */
   async getWallpaperIndex(wallpapers, settings) {
     let index = settings.currentWallpaperIndex || 0;
@@ -89,41 +89,41 @@ const Wallpaper = {
   },
 
   /**
-   * Load Bing wallpaper
+   * 加载 Bing 壁纸
    */
   async loadBingWallpaper(settings) {
     try {
-      // Check cache first
+      // 首先检查缓存
       let { wallpapers, cacheDate } = await Storage.getBingCache();
       const today = new Date().toDateString();
 
-      // Fetch new wallpapers if cache is old or empty
+      // 如果缓存过期或为空，获取新壁纸
       if (!wallpapers.length || cacheDate !== today) {
         wallpapers = await this.fetchBingWallpapers();
         await Storage.saveBingCache(wallpapers);
       }
 
       if (!wallpapers.length) {
-        console.error('No Bing wallpapers available');
+        console.error('没有可用的 Bing 壁纸');
         return;
       }
 
-      // Select wallpaper based on mode
+      // 根据模式选择壁纸
       const index = await this.getWallpaperIndex(wallpapers, settings);
       const selectedWallpaper = wallpapers[index];
       this.wallpaperInfo = selectedWallpaper;
 
-      // Load and display wallpaper with transition
+      // 加载并显示带过渡效果的壁纸
       await this.displayWallpaper(selectedWallpaper.url);
       this.updateWallpaperInfo(selectedWallpaper);
 
     } catch (error) {
-      console.error('Error loading Bing wallpaper:', error);
+      console.error('加载 Bing 壁纸出错:', error);
     }
   },
 
   /**
-   * Fetch a batch of Bing wallpapers
+   * 获取一批 Bing 壁纸
    */
   async fetchBingBatch(idx) {
     const response = await fetch(
@@ -144,58 +144,58 @@ const Wallpaper = {
   },
 
   /**
-   * Fetch Bing wallpapers from API (24 days: idx=0, 8, 16)
+   * 从 API 获取 Bing 壁纸（24天: idx=0, 8, 16）
    */
   async fetchBingWallpapers() {
     try {
-      // Fetch 3 batches in parallel for 24 days of wallpapers
+      // 并行获取 3 批壁纸，共 24 天
       const [batch0, batch8, batch16] = await Promise.all([
         this.fetchBingBatch(0),
         this.fetchBingBatch(8),
         this.fetchBingBatch(16)
       ]);
 
-      // Combine all batches
+      // 合并所有批次
       const allWallpapers = [...batch0, ...batch8, ...batch16];
 
-      // Deduplicate by date (in case of overlap)
+      // 按日期去重（以防重叠）
       const uniqueWallpapers = allWallpapers.filter((wp, index, self) =>
         index === self.findIndex(w => w.date === wp.date)
       );
 
       return uniqueWallpapers;
     } catch (error) {
-      console.error('Error fetching Bing wallpapers:', error);
+      console.error('获取 Bing 壁纸出错:', error);
       return [];
     }
   },
 
   /**
-   * Extract title from copyright string
+   * 从版权字符串中提取标题
    */
   extractTitle(copyright) {
     if (!copyright) return '';
-    // Usually format: "Title (© Author)"
+    // 通常格式: "标题 (© 作者)"
     const match = copyright.match(/^([^(]+)/);
     return match ? match[1].trim() : copyright;
   },
 
   /**
-   * Load Pexels wallpaper
+   * 加载 Pexels 壁纸
    */
   async loadPexelsWallpaper(settings) {
     try {
-      // Check if API key is configured
+      // 检查是否配置了 API key
       if (!settings.pexelsApiKey) {
         await this.loadBingWallpaper(settings);
         return;
       }
 
-      // Check cache first
+      // 首先检查缓存
       let { wallpapers, cacheDate } = await Storage.getPexelsCache();
       const today = new Date().toDateString();
 
-      // Fetch new wallpapers if cache is old or empty
+      // 如果缓存过期或为空，获取新壁纸
       if (!wallpapers.length || cacheDate !== today) {
         wallpapers = await this.fetchPexelsWallpapers(settings);
         if (wallpapers.length > 0) {
@@ -209,24 +209,24 @@ const Wallpaper = {
         return;
       }
 
-      // Select wallpaper based on mode
+      // 根据模式选择壁纸
       const index = await this.getWallpaperIndex(wallpapers, settings);
       const selectedWallpaper = wallpapers[index];
       this.wallpaperInfo = selectedWallpaper;
 
-      // Load and display wallpaper with transition (pass avgColor for caching)
+      // 加载并显示带过渡效果的壁纸（传递 avgColor 用于缓存）
       await this.displayWallpaper(selectedWallpaper.url, selectedWallpaper.avgColor);
       this.updateWallpaperInfo(selectedWallpaper);
 
     } catch (error) {
-      console.error('Error loading Pexels wallpaper:', error);
-      // Fallback to Bing on error
+      console.error('加载 Pexels 壁纸出错:', error);
+      // 出错时回退到 Bing
       await this.loadBingWallpaper(settings);
     }
   },
 
   /**
-   * Fetch Pexels wallpapers from API
+   * 从 API 获取 Pexels 壁纸
    */
   async fetchPexelsWallpapers(settings) {
     try {
@@ -244,17 +244,17 @@ const Wallpaper = {
       );
 
       if (response.status === 401) {
-        console.error('Pexels API key is invalid');
+        console.error('Pexels API key 无效');
         return [];
       }
 
       if (response.status === 429) {
-        console.error('Pexels API rate limit exceeded');
+        console.error('Pexels API 请求频率超限');
         return [];
       }
 
       if (!response.ok) {
-        console.error('Pexels API error:', response.status);
+        console.error('Pexels API 错误:', response.status);
         return [];
       }
 
@@ -264,36 +264,36 @@ const Wallpaper = {
         return [];
       }
 
-      // Use large2x instead of original for faster loading (~1880px width)
+      // 使用 large2x 而非 original 以加快加载速度（约 1880px 宽度）
       return data.photos.map(photo => ({
         url: photo.src.large2x,
-        title: photo.alt || 'Pexels Wallpaper',
-        copyright: `Photo by ${photo.photographer} on Pexels`,
+        title: photo.alt || 'Pexels 壁纸',
+        copyright: `摄影师 ${photo.photographer} 来自 Pexels`,
         photographer: photo.photographer,
         photographerUrl: photo.photographer_url,
         pexelsUrl: photo.url,
         avgColor: photo.avg_color
       }));
     } catch (error) {
-      console.error('Error fetching Pexels wallpapers:', error);
+      console.error('获取 Pexels 壁纸出错:', error);
       return [];
     }
   },
 
   /**
-   * Load local wallpaper
+   * 加载本地壁纸
    */
   async loadLocalWallpaper(settings) {
     try {
       const wallpapers = await Storage.getLocalWallpapers();
 
       if (!wallpapers.length) {
-        // No local wallpapers, show default gradient
+        // 没有本地壁纸，显示默认渐变背景
         this.showDefaultBackground();
         return;
       }
 
-      // Select wallpaper based on mode
+      // 根据模式选择壁纸
       const index = await this.getWallpaperIndex(wallpapers, settings);
       const selectedWallpaper = wallpapers[index];
       this.wallpaperInfo = { title: '本地壁纸', copyright: '' };
@@ -302,40 +302,40 @@ const Wallpaper = {
       this.updateWallpaperInfo({ title: '本地壁纸', copyright: '' });
 
     } catch (error) {
-      console.error('Error loading local wallpaper:', error);
+      console.error('加载本地壁纸出错:', error);
       this.showDefaultBackground();
     }
   },
 
   /**
-   * Display wallpaper with fade transition
-   * @param {string} url - The wallpaper URL
-   * @param {string} avgColor - Optional average color (for Pexels)
+   * 显示带渐变过渡效果的壁纸
+   * @param {string} url - 壁纸 URL
+   * @param {string} avgColor - 可选的平均颜色（用于 Pexels）
    */
   async displayWallpaper(url, avgColor = null) {
     return new Promise((resolve) => {
       const currentEl = document.getElementById('wallpaper-current');
       const nextEl = document.getElementById('wallpaper-next');
 
-      // Preload image
+      // 预加载图片
       const img = new Image();
       img.onload = async () => {
-        // Set the next layer
+        // 设置下一层
         nextEl.style.backgroundImage = `url(${url})`;
 
-        // Trigger transition
+        // 触发过渡
         requestAnimationFrame(() => {
           nextEl.style.opacity = '1';
           currentEl.style.opacity = '0';
 
-          // After transition, swap layers
+          // 过渡完成后，交换图层
           setTimeout(async () => {
             currentEl.style.backgroundImage = `url(${url})`;
-            currentEl.style.backgroundColor = ''; // Clear any background color
+            currentEl.style.backgroundColor = ''; // 清除背景颜色
             currentEl.style.opacity = '1';
             nextEl.style.opacity = '0';
 
-            // Save as last wallpaper for instant display next time
+            // 保存为上次壁纸，以便下次即时显示
             await Storage.saveLastWallpaper(url, avgColor);
             resolve();
           }, 800);
@@ -343,7 +343,7 @@ const Wallpaper = {
       };
 
       img.onerror = () => {
-        console.error('Failed to load wallpaper:', url);
+        console.error('加载壁纸失败:', url);
         resolve();
       };
 
@@ -352,7 +352,7 @@ const Wallpaper = {
   },
 
   /**
-   * Show default gradient background
+   * 显示默认渐变背景
    */
   showDefaultBackground() {
     const currentEl = document.getElementById('wallpaper-current');
@@ -361,7 +361,7 @@ const Wallpaper = {
   },
 
   /**
-   * Update wallpaper info tooltip
+   * 更新壁纸信息提示
    */
   updateWallpaperInfo(info) {
     const tooltip = document.getElementById('wallpaper-info-tooltip');
@@ -375,7 +375,7 @@ const Wallpaper = {
   },
 
   /**
-   * Add local wallpaper
+   * 添加本地壁纸
    */
   async addLocalWallpaper(file) {
     return new Promise((resolve, reject) => {
@@ -397,7 +397,7 @@ const Wallpaper = {
   },
 
   /**
-   * Remove local wallpaper
+   * 删除本地壁纸
    */
   async removeLocalWallpaper(index) {
     const wallpapers = await Storage.getLocalWallpapers();
@@ -406,7 +406,7 @@ const Wallpaper = {
   },
 
   /**
-   * Refresh wallpaper
+   * 刷新壁纸
    */
   async refresh() {
     const settings = await Storage.getSettings();
@@ -414,5 +414,5 @@ const Wallpaper = {
   }
 };
 
-// Make available globally
+// 暴露到全局
 window.Wallpaper = Wallpaper;
